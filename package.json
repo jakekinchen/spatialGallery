@@ -17,7 +17,7 @@
     "leva": "^0.9.25",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "three": "^0.133.0"
+    "three": "^0.137.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.2",
