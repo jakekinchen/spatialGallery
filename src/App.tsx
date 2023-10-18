@@ -1,7 +1,7 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import "./App.css";
-import "./folio/src/index.js";
+import FolioCanvas from "./folio/src/javascript/FolioCanvas";
 
 function ThreeScene() {
   return (
@@ -15,11 +15,7 @@ function ThreeScene() {
 }
 
 function App() {
-  return (
-    <div className="App h-screen">
-      <ThreeScene />
-    </div>
-  );
+  return <FolioCanvas />;
 }
 
 export default App;
