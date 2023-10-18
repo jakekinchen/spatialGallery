@@ -20,6 +20,7 @@
     "three": "^0.137.0"
   },
   "devDependencies": {
+    "@types/dat.gui": "^0.7.10",
     "@types/react": "^18.0.2",
     "@types/react-dom": "^18.0.0",
     "@types/three": "^0.139.0",
