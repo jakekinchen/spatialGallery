@@ -1,21 +1,19 @@
-import { OrbitControls } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Leva } from "leva";
 import "./App.css";
-import FolioCanvas from "./folio/src/javascript/FolioCanvas";
-
-function ThreeScene() {
-  return (
-    <Canvas>
-      <ambientLight />
-      <pointLight position={[5, 5, 5]} intensity={1} />
-      <pointLight position={[-3, -3, 2]} />
-      <OrbitControls />
-    </Canvas>
-  );
-}
+import FolioCanvas from "./folio/javascript/FolioCanvas";
+import "./folio/style/main.css";
+const isLevaDebug = window.location.hash === "#leva";
 
 function App() {
-  return <FolioCanvas />;
+
+  return (
+    <div className="w-screen h-screen">
+        {//<Leva hidden={!isLevaDebug} collapsed oneLineLabels />
+            }
+            <Leva collapsed oneLineLabels />
+      <FolioCanvas />
+    </div>
+  );
 }
 
 export default App;
