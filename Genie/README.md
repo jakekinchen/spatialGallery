@@ -19,10 +19,10 @@ Genie CLI is a command-line interface tool designed to interact with the OpenAI 
 
 ### Installation
 
-1. Clone the repository:
+1. Navigate to project root and clone the repository here:
 
 ```sh
-git clone https://github.com/jakekinchen/genie-ai-cli.git
+git clone https://github.com/jakekinchen/genie-cli.git
 cd genie-ai-cli
 
 2. Once inside the project directory, install the dependencies
@@ -35,6 +35,8 @@ cd genie-ai-cli
 
 6. type `genie start` to start the assistant
 
-7. type `genie help` to see a list of available commands
+7. type `genie link code` to make the code available to the assistant
+
+8. type `genie help` to see a list of available commands
 
 ```

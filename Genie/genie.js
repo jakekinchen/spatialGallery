@@ -256,10 +256,10 @@ async function displayResponse(threadId) {
         console.log(response);
         }
         else if (process.argv.includes('help')){
-            console.log('Usage: genie [start|create|update|delete|link|unlink]');
+            console.log('Usage: genie [start|create|update|delete|link|unlink|list|help]');
         }
     else {
-      console.log('Usage: genie [start|create|update|delete|link|unlink]');
+      console.log('Usage: genie [start|create|update|delete|link|unlink|list|help]');
     }
     process.exit();
   }
