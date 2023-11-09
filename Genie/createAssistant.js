@@ -13,6 +13,10 @@ const {
   listAssistantFiles,
   listAssistantDetails,
 } = require('./openaiMethods');
+const {
+  assistantDescription,
+  assistantInstructions,
+} = require('./config');
 
 // Load .gitignore rules
 const ig = ignore().add(fs.readFileSync('.gitignore').toString());
@@ -61,16 +65,19 @@ async function createAndUploadAssistant() {
       const assistant = await createAssistant(
           'gpt-4-1106-preview', // model
           'GenieGPT', // name
-          'An assistant that generates code for a 3D spatial gallery', // description
-          'Help with code generation for a threejs and react-three-fiber spatial gallery.', // instructions
+          assistantDescription, // description
+          assistantInstructions, // instructions
           [{ "type": "retrieval" }], // tools
           [], // file_ids will be updated after file upload
           {} // metadata
       );
 
       const assistantId = assistant.id;
-      // add boolean field 'active' to assistant object, set to true
-        const response = uploadFileIntoAssistant('./Genie/code.json', assistantId);
+        // if code.json exists in ./Genie, and it is not empty, upload it
+        if (fs.existsSync('./Genie/code.json') && fs.statSync('./Genie/code.json').size > 0) {
+            const response = uploadFileIntoAssistant('./Genie/code.json', assistantId);
+            console.log(response);
+        }
         console.log(response);
         return assistantId;
 

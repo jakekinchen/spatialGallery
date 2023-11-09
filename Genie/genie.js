@@ -187,6 +187,11 @@ async function displayResponse(threadId) {
   }
 
   async function start() {
+    // if ./Genie/code.json does not exist or is empty, create it with createJSONDocument()
+    if (!fs.existsSync('./Genie/code.json') || fs.statSync('./Genie/code.json').size === 0) {
+        createJSONDocument();
+    }
+
     if (process.argv.includes('start')) {
         const assistants = await listAssistants();
         let assistantId = null;
@@ -249,6 +254,9 @@ async function displayResponse(threadId) {
         // List all assistants
         response = await listAssistants();
         console.log(response);
+        }
+        else if (process.argv.includes('help')){
+            console.log('Usage: genie [start|create|update|delete|link|unlink]');
         }
     else {
       console.log('Usage: genie [start|create|update|delete|link|unlink]');

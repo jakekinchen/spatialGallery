@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const ignore = require('ignore');
 
-const allowedExtensions = new Set(['.js', '.css', '.jsx', '.tsx', '.ts', '.html', '.json']);
+const code_extensions = require('./config').code_extensions;
+const allowedExtensions = new Set(code_extensions);
 
 // Load .gitignore rules
 const ig = ignore().add(fs.readFileSync('.gitignore', 'utf8'));
