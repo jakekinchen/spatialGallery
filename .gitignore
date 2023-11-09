@@ -6,7 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
 node_modules
 dist
 dist-ssr
@@ -22,3 +21,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Stuff I don't want in the JSONL file
+public/
+src/folio/static
+package-lock.json
+.env
