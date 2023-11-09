@@ -87,7 +87,7 @@ export default class ProjectsSection
         // Add all project from the list
         for(const _options of this.list)
         {
-            this.add(_options)
+           // this.add(_options)
         }
     }
 

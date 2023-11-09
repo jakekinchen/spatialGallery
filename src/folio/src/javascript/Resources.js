@@ -122,6 +122,11 @@ import informationContactMailLabelSource from '../models/information/static/cont
 
 import informationActivitiesSource from '../models/information/static/activities.png'
 
+// Start
+import startStaticBaseSource from '../models/start/static/button.glb'
+import startStaticCollisionSource from '../models/start/static/collision.glb'
+ import startStaticFloorShadowSource from '../models/start/static/floorShadow.png'
+
 // Playground
 import playgroundStaticFloorShadowSource from '../models/playground/static/floorShadow.png'
 import playgroundStaticBaseSource from '../models/playground/static/base.glb'
@@ -339,6 +344,11 @@ export default class Resources extends EventEmitter
             { name: 'informationContactMailLabel', source: informationContactMailLabelSource, type: 'texture' },
 
             { name: 'informationActivities', source: informationActivitiesSource, type: 'texture' },
+
+            // Start
+            { name: 'startStaticBase', source: startStaticBaseSource },
+            { name: 'startStaticCollision', source: startStaticCollisionSource },
+           { name: 'startStaticFloorShadow', source: startStaticFloorShadowSource, type: 'texture' },
 
             // Playground
             { name: 'playgroundStaticBase', source: playgroundStaticBaseSource },

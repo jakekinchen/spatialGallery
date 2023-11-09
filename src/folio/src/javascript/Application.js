@@ -46,7 +46,7 @@ export default class Application
     {
         this.config = {}
         this.config.debug = window.location.hash === '#debug'
-        this.config.cyberTruck = window.location.hash === '#cybertruck'
+        this.config.cyberTruck = true
         this.config.touch = false
 
         window.addEventListener('touchstart', () =>
