@@ -66,7 +66,7 @@ const Folio = (props) => {
     config.current = {
       debug: window.location.hash === "#debug",
       cyberTruck: window.location.hash === "#cybertruck",
-      touch: false,
+      touch: true,
     };
     window.addEventListener(
       "touchstart",
@@ -296,12 +296,15 @@ const Folio = (props) => {
     });
   }, []);*/
   useEffect(() =>{
-    console.log()
-    console.log(camera.current.angle.value.x)
+    console.log(camera.current)
+    console.log(camera.current.orbitControls)
+    console.log(camera.current.instance)
+    console.log(world.current.car)
     camera.current.angle.value.x = props.cameraX;
     camera.current.angle.value.y = props.cameraY;
     camera.current.angle.value.z = props.cameraZ;
-  },[props.cameraX,props.cameraY,props.cameraZ]);
+    camera.current.pan.enabled = props.cameraPan;
+  },[props.cameraX,props.cameraY,props.cameraZ,props.cameraPan]);
   return (
       <WorldComponent />
   );

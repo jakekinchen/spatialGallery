@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
-import CameraComponent from "./CameraComponent";
+import Camera from "./Camera";
 import Sizes from "./Utils/Sizes";
 import World from "./World";
 import Car from "./World/Car";
@@ -46,7 +46,7 @@ export interface SizesType extends Sizes {
   };
 }
 
-export interface CameraType extends CameraComponent {
+export interface CameraType extends Camera {
   orbitControls: OrbitControls;
   instance: PerspectiveCamera;
 }

@@ -57,7 +57,7 @@ export function useGetMaterial() {
         },
         { collapsed: true, color: LEVA_FOLDERS.floor.color }
       ),
-      revealProgress: { value: 0, min: 0, max: 1, label: "Reveal progress" },
+      /*revealProgress: { value: 0, min: 0, max: 1, label: "Reveal progress" },
       [LEVA_FOLDERS.indirectLights.label]: folder(
         {
           indirectDistanceAmplitude: {
@@ -72,11 +72,12 @@ export function useGetMaterial() {
           indirectColor: { value: defaultShadowColor, label: "Color" },
         },
         { collapsed: true, color: LEVA_FOLDERS.indirectLights.color }
-      ),
+      ),*/
     },
     { collapsed: true, color: LEVA_FOLDERS.materials.color }
-  );
 
+
+  );
   const getMaterial = (meshName: string, floorShadowTexture: Texture) => {
     const color = getMatcapColor(meshName);
     if (color) {

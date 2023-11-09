@@ -1,19 +1,19 @@
-import {Canvas, useThree} from "@react-three/fiber";
+import {Canvas} from "@react-three/fiber";
 import { LinearEncoding, NoToneMapping } from "three";
 import Folio from "./Folio";
 import {folder, useControls} from "leva";
 import {LEVA_FOLDERS} from "./constants";
 import CameraLogger from "./cameraLogger";
-import {PerspectiveCamera} from "@react-three/drei";
 import {useMemo} from "react";
 
 
 export default function FolioCanvas() {
     const options = useMemo(()=> {
         return {
-            x: { value: 1.135, min: -2, max: 2, step: 0.01 },
-            y: { value: -1.45, min: -2, max: 2, step: 0.01 },
-            z: { value: 1.15, min: -2, max: 2, step: 0.01 },
+            x: { value: 1.135, min: -4, max: 4, step: 0.01 },
+            y: { value: -1.45, min: -4, max: 4, step: 0.01 },
+            z: { value: 1.15, min: -4, max: 4, step: 0.01 },
+            Pan: true,
         }
 
     },[])
@@ -51,8 +51,9 @@ export default function FolioCanvas() {
           cameraX={cameraControls.x}
           cameraY={cameraControls.y}
           cameraZ={cameraControls.z}
+          cameraPan={cameraControls.Pan}
       />
-        <CameraLogger event='mousedown'/>
+        {/*<CameraLogger event='mousedown'/>*/}
     </Canvas>
   );
 }
