@@ -1,7 +1,7 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import "./App.css";
-import "./folio/src/index.js";
+import "./folio/index.js";
 
 function ThreeScene() {
   return (
