@@ -126,6 +126,7 @@ import informationActivitiesSource from '../models/information/static/activities
 import startStaticBaseSource from '../models/start/static/button.glb'
 import startStaticCollisionSource from '../models/start/static/collision.glb'
  import startStaticFloorShadowSource from '../models/start/static/floorShadow.png'
+ import startStaticButtonTextureSource from '../models/start/static/plus.png'
 
 // Playground
 import playgroundStaticFloorShadowSource from '../models/playground/static/floorShadow.png'
@@ -349,6 +350,7 @@ export default class Resources extends EventEmitter
             { name: 'startStaticBase', source: startStaticBaseSource },
             { name: 'startStaticCollision', source: startStaticCollisionSource },
            { name: 'startStaticFloorShadow', source: startStaticFloorShadowSource, type: 'texture' },
+              { name: 'startStaticButtonTexture', source: startStaticButtonTextureSource, type: 'texture' },
 
             // Playground
             { name: 'playgroundStaticBase', source: playgroundStaticBaseSource },
