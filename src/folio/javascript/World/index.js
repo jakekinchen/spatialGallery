@@ -13,6 +13,7 @@ import ProjectsSection from './Sections/ProjectsSection.js'
 import CrossroadsSection from './Sections/CrossroadsSection.js'
 import InformationSection from './Sections/InformationSection.js'
 import PlaygroundSection from './Sections/PlaygroundSection.js'
+import StartSection from './Sections/StartSection.js'
 // import DistinctionASection from './Sections/DistinctionASection.js'
 // import DistinctionBSection from './Sections/DistinctionBSection.js'
 // import DistinctionCSection from './Sections/DistinctionCSection.js'
@@ -73,7 +74,7 @@ export default class
         this.setTiles()
         this.setWalls()
         this.setSections()
-        this.setEasterEggs()
+        //this.setEasterEggs()
     }
 
     setReveal()
@@ -439,24 +440,24 @@ export default class
         // Intro
         this.sections.intro = new IntroSection({
             ...options,
-            x: 0,
-            y: 0
+            x: 30,
+            y: - 30
         })
         this.container.add(this.sections.intro.container)
 
         // Crossroads
-        this.sections.crossroads = new CrossroadsSection({
-            ...options,
-            x: 0,
-            y: - 30
-        })
-        this.container.add(this.sections.crossroads.container)
+        // this.sections.crossroads = new CrossroadsSection({
+        //     ...options,
+        //     x: 0,
+        //     y: - 30
+        // })
+        // this.container.add(this.sections.crossroads.container)
 
         // Projects
         this.sections.projects = new ProjectsSection({
             ...options,
-            x: 30,
-            y: - 30
+            x: 10,
+            y: 0
             // x: 0,
             // y: 0
         })
@@ -472,7 +473,15 @@ export default class
         })
         this.container.add(this.sections.information.container)
 
-        // Playground
+        // Start
+        this.sections.start = new StartSection({
+            ...options,
+            x: 0,
+            y: 2
+        })
+        this.container.add(this.sections.start.container)
+
+        //Playground
         this.sections.playground = new PlaygroundSection({
             ...options,
             x: - 38,
