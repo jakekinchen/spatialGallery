@@ -40,7 +40,7 @@ export default class StartSection
             base: this.resources.items.startStaticBase.scene,
             collision: this.resources.items.startStaticCollision.scene,
             floorShadowTexture: this.resources.items.startStaticFloorShadowTexture,
-
+            material : this.resources.items.startStaticMaterial,
             offset: new THREE.Vector3(this.x, this.y, 0),
             mass: 0,
             rotation: new THREE.Euler(Math.PI * 0.5, 0, 0),

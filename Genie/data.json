@@ -1,0 +1,21 @@
+{
+    "assistants": [
+        {
+            "assistantId": null,
+            "files": [
+                {   
+                    "fileId": null
+                }
+            ]
+        }
+    ],
+    "files" : [
+        {
+            "fileId": null,
+            "name": null,
+            "type": null,
+            "size": null
+        }
+    ]
+
+}

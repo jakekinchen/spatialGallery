@@ -15,6 +15,7 @@ const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 const readline = require('readline');
 const { create } = require('domain');
+const { uploadCodebase } = require('./config');
 
 // Create readline interface for CLI interaction
 const rl = readline.createInterface({
@@ -187,10 +188,15 @@ async function displayResponse(threadId) {
   }
 
   async function start() {
+    uploadList = [];
     // if ./Genie/code.json does not exist or is empty, create it with createJSONDocument()
-    if (!fs.existsSync('./Genie/code.json') || fs.statSync('./Genie/code.json').size === 0) {
-        createJSONDocument();
+    if (uploadCodebase) {
+        const { shouldUpload, jsonFilePath } = createJSONDocument('..', 'codebase');
+        if (shouldUpload) {
+          uploadList.push(jsonFilePath);
+        }
     }
+  
 
     if (process.argv.includes('start')) {
         const assistants = await listAssistants();

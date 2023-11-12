@@ -16,13 +16,15 @@ const {
 const {
   assistantDescription,
   assistantInstructions,
+  assistantName,
+  code_extensions,
 } = require('./config');
 
 // Load .gitignore rules
 const ig = ignore().add(fs.readFileSync('.gitignore').toString());
 
 // Allowed extensions for upload
-const allowedExtensions = new Set(['.js', '.css', '.jsx', '.tsx', '.ts', '.html', '.json']);
+const allowedExtensions = new Set(code_extensions);
 
 async function commentFilePaths(dirPath = '/../') {
     // Helper function to insert a comment at the top of a file
@@ -58,13 +60,36 @@ async function commentFilePaths(dirPath = '/../') {
     await processDirectory(dirPath);
 }
 
+async function updateAssistantJSON(assistantId) {
+  // If it doesn't exist, create a new assistant object with the given ID in ./data.json
+  if (!fs.existsSync('./data.json')) {
+    // Create a new data.json file
+    fs.writeFileSync('./data.json', JSON.stringify({ assistants: {} }));
+  }
+  // Read the data.json file
+  const data = JSON.parse(fs.readFileSync('./data.json'));
+  // If the assistant ID is not present in the data.json file, add it
+  if (!data.assistants[assistantId]) {
+    data.assistants[assistantId] = {};
+  }
+  // Update the assistant details in data.json
+  const assistantDetails = await listAssistantDetails(assistantId);
+  data.assistants[assistantId].details = assistantDetails;
+  // Update the assistant files in data.json
+  const assistantFiles = await listAssistantFiles(assistantId);
+  data.assistants[assistantId].files = assistantFiles;
+  // Write the updated data.json file
+  fs.writeFileSync('./data.json', JSON.stringify(data));
+}
+
+
 // Main function to create an assistant and upload a file
 async function createAndUploadAssistant() {
   try {
       // Create the assistant
       const assistant = await createAssistant(
           'gpt-4-1106-preview', // model
-          'GenieGPT', // name
+          assistantName, // name
           assistantDescription, // description
           assistantInstructions, // instructions
           [{ "type": "retrieval" }], // tools
