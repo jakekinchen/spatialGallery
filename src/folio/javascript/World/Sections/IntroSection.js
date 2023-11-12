@@ -22,11 +22,13 @@ export default class IntroSection
         this.container.updateMatrix()
 
         // this.setStatic()
+        
         this.setInstructions()
         this.setOtherInstructions()
        // this.setTitles()
        // this.setTiles()
         this.setDikes()
+        //this.setButtons()
     }
 
     setStatic()
@@ -272,6 +274,20 @@ export default class IntroSection
             shadow: { sizeX: 2.5, sizeY: 1.5, offsetZ: - 0.6, alpha: 0.3 },
             mass: 1.5,
             soundName: 'brick'
+        })
+    }
+
+    setButtons()
+    {
+        this.buttons = {}
+        this.buttons.add({
+            text: 'Start',
+            size: 1,
+            position: new THREE.Vector3(0, - 2, 0),
+            onClick: () =>
+            {
+                this.config.start()
+            }
         })
     }
 
