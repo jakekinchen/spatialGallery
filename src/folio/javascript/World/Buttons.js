@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 
 
 export default class Button {
@@ -8,44 +9,44 @@ export default class Button {
     console.log('Options: ', _options)
     this.renderer = _options.renderer;
     this.camera = _options.camera;
-    this.color = _options.color || 0xaaaaaa;
+    // make default color a white
+    this.color = _options.color || 0xffffff;
     this.text = _options.text || '';
-    this.size = _options.size || 1;
+    this.size = _options.size || .6;
     this.hoverColor = _options.hoverColor || 0xffffff;
-    this.position = _options.position || new THREE.Vector3(0, 0, 0);
+    this.position = _options.position || new THREE.Vector3(0, 4, 2);
     this.onClick = _options.onClick || function() {};
     this.container = new THREE.Object3D();
 
     // Relative path to the font file from the Buttons.js file
     const fontPath = '../../javascript/Comic_Neue_Regular.json';
 
-    this.loader = new FontLoader();
-    this.loader.load(fontPath, (font) => {
-        // Once the font is loaded, create text geometry
-        this.textGeometry = new TextGeometry(this.text, {
-            font: font,
-            size: this.size * 0.5,
-            height: this.size * 0.1
-        });
-
-        this.textMesh = new THREE.Mesh(this.textGeometry, new THREE.MeshBasicMaterial({ color: this.hoverColor }));
-        this.textMesh.position.copy(this.position);
-
-        // Center the text geometry
-        this.textGeometry.computeBoundingBox();
-        const textWidth = this.textGeometry.boundingBox.max.x - this.textGeometry.boundingBox.min.x;
-        this.textMesh.position.x -= textWidth / 2;
-
-        // Add the text mesh to the scene
-        this.container.add(this.textMesh);
+    // Load the font and create the text geometry
+    const fontLoader = new FontLoader();
+    fontLoader.load(fontPath, (font) => {
+      const textMaterial = new THREE.MeshBasicMaterial({ color: this.hoverColor });
+      const textShapes = font.generateShapes(this.text, this.size);
+      const textGeometry = new THREE.ShapeGeometry(textShapes);
+      textGeometry.computeBoundingBox();
+      
+      // Center the text geometry
+      const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
+      const textHeight = textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y;
+      textGeometry.translate(-0.5 * textWidth, -0.5 * textHeight, 0.1); // Adjust the 0.1 if needed
+      
+      this.textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      this.container.add(this.textMesh);
     });
 
-    // Create the button mesh and add it to the scene
-    this.material = new THREE.MeshBasicMaterial({ color: this.color });
-    this.geometry = new THREE.BoxGeometry(this.size * 2, this.size, this.size * 0.5);
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
-    this.mesh.position.copy(this.position);
-    this.container.add(this.mesh);
+    // Button geometry with rounded corners
+    const buttonGeometry = new RoundedBoxGeometry(this.size * 2, this.size, .3, 5, 1); // Adjust the 0.1 thickness and 0.05 borderRadius as needed
+    const buttonMaterial = new THREE.MeshBasicMaterial({ color: this.color });
+    // Rotate the button by 90 degrees to make it vertical
+    buttonGeometry.rotateX(Math.PI / 2);
+    this.buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+    this.buttonMesh.position.copy(this.position);
+    this.container.add(this.buttonMesh);
+
 
     // Add interactivity (implementation needed)
     this.addInteractivity();
