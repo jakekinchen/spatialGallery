@@ -24,7 +24,7 @@ export default class IntroSection
         this.container.matrixAutoUpdate = false
         this.container.updateMatrix()
 
-        // this.setStatic()
+         
         
         this.setInstructions()
         this.setOtherInstructions()
@@ -32,16 +32,19 @@ export default class IntroSection
        // this.setTiles()
         this.setDikes()
         this.setButtons()
+        this.setStatic()
     }
 
     setStatic()
     {
         this.objects.add({
-            base: this.resources.items.introStaticBase.scene,
-            collision: this.resources.items.introStaticCollision.scene,
-            floorShadowTexture: this.resources.items.introStaticFloorShadowTexture,
-            offset: new THREE.Vector3(0, 0, 0),
-            mass: 0
+            base: this.resources.items.startStaticBase.scene,
+            collision: this.resources.items.startStaticCollision.scene,
+            floorShadowTexture: this.resources.items.startStaticFloorShadowTexture,
+            material : this.resources.items.startStaticMaterial,
+            offset: new THREE.Vector3(this.x, this.y, 0),
+            mass: 0,
+            rotation: new THREE.Euler(Math.PI * 0.5, 0, 0),
         })
     }
 
@@ -281,20 +284,22 @@ export default class IntroSection
     }
 
     setButtons() {
-        this.startButton = new Button( {
+        this.startButton = new Button({
             renderer: this.renderer,
             camera: this.camera,
-            text: 'Start',
+            position: new THREE.Vector3(0, 0, 0),
+            text: 'My Button',
             size: 1,
-            position: new THREE.Vector3(0, -2, 0),
+            usePredefinedGeometry: true,
+            base: this.resources.items.startStaticBase.scene,
             onClick: () => {
                 this.config.start();
             },
             // ...other options...
         });
+        
         this.startButton.container = new THREE.Object3D()
-        this.startButton.container.position.x = 0
-        this.startButton.container.position.y = - 2
+        this.startButton.container.position.set(0, -2, 0);
         this.container.add(this.startButton.container);
     }
 
@@ -305,6 +310,8 @@ export default class IntroSection
             delta: new THREE.Vector2(0, - 4.5)
         })
     }
+
+    
 
     setDikes()
     {

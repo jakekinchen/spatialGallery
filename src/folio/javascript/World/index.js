@@ -71,7 +71,6 @@ export default class
         this.setZones()
         this.setObjects()
         this.setCar()
-        console.log("renderer: " + this.renderer)
         this.setButtons()
         this.areas.car = this.car
         this.setTiles()
@@ -253,12 +252,12 @@ export default class
 
     setButtons()
     {
-        console.log("renderer: " + this.renderer)
         this.button = new Button({
             renderer: this.renderer,
             camera: this.camera,
             resources: this.resources,
             time: this.time,
+            shadows: this.shadows,
             debug: this.debugFolder
         })
         this.container.add(this.button.container)

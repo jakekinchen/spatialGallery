@@ -346,7 +346,7 @@ export default class Resources extends EventEmitter
 
             { name: 'informationActivities', source: informationActivitiesSource, type: 'texture' },
 
-            // Start
+            // Start 
             { name: 'startStaticBase', source: startStaticBaseSource },
             { name: 'startStaticCollision', source: startStaticCollisionSource },
            { name: 'startStaticFloorShadow', source: startStaticFloorShadowSource, type: 'texture' },
