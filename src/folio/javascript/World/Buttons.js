@@ -4,10 +4,10 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 
 
 export default class Button {
-  constructor(scene, _options) {
+  constructor(_options) {
+    console.log('Options: ', _options)
     this.renderer = _options.renderer;
     this.camera = _options.camera;
-    this.scene = scene;
     this.color = _options.color || 0xaaaaaa;
     this.text = _options.text || '';
     this.size = _options.size || 1;

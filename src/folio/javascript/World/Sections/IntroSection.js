@@ -281,7 +281,7 @@ export default class IntroSection
     }
 
     setButtons() {
-        this.startButton = new Button(this.container, {
+        this.startButton = new Button( {
             renderer: this.renderer,
             camera: this.camera,
             text: 'Start',
@@ -292,7 +292,10 @@ export default class IntroSection
             },
             // ...other options...
         });
-        
+        this.startButton.container = new THREE.Object3D()
+        this.startButton.container.position.x = 0
+        this.startButton.container.position.y = - 2
+        this.container.add(this.startButton.container);
     }
 
     setTiles()
