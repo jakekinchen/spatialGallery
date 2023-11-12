@@ -10,7 +10,7 @@ export default class Button {
     this.renderer = _options.renderer;
     this.camera = _options.camera;
     // make default color a white
-    this.color = _options.color || 0x00000;
+    this.color = _options.color || 0xffffff;
     this.text = _options.text || '';
     this.time = _options.time
       this.areas = _options.areas
@@ -43,19 +43,23 @@ export default class Button {
     });
 
     // Button geometry with rounded corners
-    const buttonGeometry = new RoundedBoxGeometry(this.size * 2, this.size, .3, 5, 1); // Adjust the 0.1 thickness and 0.05 borderRadius as needed
+    const buttonGeometry = new RoundedBoxGeometry(this.size * 2, this.size, .3, 5, 1);
+    // Adjust the 0.1 thickness and 0.05 borderRadius as needed
     const buttonMaterial = new THREE.MeshBasicMaterial({ color: this.color });
     // Rotate the button by 90 degrees to make it vertical
     buttonGeometry.rotateX(Math.PI / 2);
     this.buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
-    console.log(this.buttonMesh)
+    //console.log(this.buttonMesh)
     this.buttonMesh = this.areas.add({
         position: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.z),
-        halfExtents: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.y)
+        halfExtents: new THREE.Vector2(this.buttonMesh.position.x, 0.5)
     })
-
+    this.buttonMesh.on('interact', () =>
+    {
+      console.log(this.buttonMesh)
+    })
     // Add interactivity (implementation needed)
     //this.addInteractivity();
     }
