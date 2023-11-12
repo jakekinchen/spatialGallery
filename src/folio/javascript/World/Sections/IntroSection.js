@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import Button from './../Buttons.js'
 
 export default class IntroSection
 {
@@ -15,6 +16,8 @@ export default class IntroSection
         this.debug = _options.debug
         this.x = _options.x
         this.y = _options.y
+        this.camera = _options.camera
+        this.renderer = _options.renderer
 
         // Set up
         this.container = new THREE.Object3D()
@@ -278,7 +281,9 @@ export default class IntroSection
     }
 
     setButtons() {
-        this.startButton = new Button(this.scene, {
+        this.startButton = new Button(this.container, {
+            renderer: this.renderer,
+            camera: this.camera,
             text: 'Start',
             size: 1,
             position: new THREE.Vector3(0, -2, 0),
@@ -287,7 +292,7 @@ export default class IntroSection
             },
             // ...other options...
         });
-        this.scene.add(this.startButton.container);
+        
     }
 
     setTiles()

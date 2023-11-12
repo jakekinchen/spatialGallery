@@ -10,6 +10,7 @@ import Tiles from './Tiles.js'
 import Walls from './Walls.js'
 import IntroSection from './Sections/IntroSection.js'
 import ProjectsSection from './Sections/ProjectsSection.js'
+import Button from './Buttons.js'
 import CrossroadsSection from './Sections/CrossroadsSection.js'
 import InformationSection from './Sections/InformationSection.js'
 import PlaygroundSection from './Sections/PlaygroundSection.js'
@@ -70,10 +71,12 @@ export default class
         this.setZones()
         this.setObjects()
         this.setCar()
+        this.setButtons()
         this.areas.car = this.car
         this.setTiles()
         this.setWalls()
         this.setSections()
+        this.setButtons()
         //this.setEasterEggs()
     }
 
@@ -245,6 +248,18 @@ export default class
                 this.reveal.go()
             }, 600)
         })
+    }
+
+    setButtons()
+    {
+        this.button = new Button({
+            renderer: this.renderer,
+            camera: this.camera,
+            resources: this.resources,
+            time: this.time,
+            debug: this.debugFolder
+        })
+        this.container.add(this.button.container)
     }
 
     setSounds()
@@ -443,7 +458,9 @@ export default class
         this.sections.intro = new IntroSection({
             ...options,
             x: 30,
-            y: - 30
+            y: - 30,
+            renderer: this.renderer,
+            camera: this.camera,
         })
         this.container.add(this.sections.intro.container)
 
