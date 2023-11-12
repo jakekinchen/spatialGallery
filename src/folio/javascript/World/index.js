@@ -479,7 +479,7 @@ export default class
         this.container.add(this.sections.projects.container)
 
         // Information
-        this.sections.information = new InformationSection({
+        /*this.sections.information = new InformationSection({
             ...options,
             x: 1.2,
             y: - 55
@@ -487,11 +487,21 @@ export default class
             // y: - 10
         })
         this.container.add(this.sections.information.container)
+            */
 
+        //Playground
+        this.sections.pedestal = new PlaygroundSection({
+            ...options,
+            x: - 38,
+            y: - 34
+            // x: - 15,
+            // y: - 4
+        })
+        //this.container.add(this.sections.playground.container)
         // Start
         this.sections.start = new StartSection({
             ...options,
-            x: 0,
+            x: 5,
             y: 2
         })
         this.container.add(this.sections.start.container)

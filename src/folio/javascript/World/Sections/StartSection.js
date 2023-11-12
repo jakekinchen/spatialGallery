@@ -37,13 +37,13 @@ export default class StartSection
     {
 
         this.objects.add({
-            base: this.resources.items.startStaticBase.scene,
+            base: this.resources.items.pedestalBase.scene,
             collision: this.resources.items.startStaticCollision.scene,
             floorShadowTexture: this.resources.items.startStaticFloorShadowTexture,
             material : this.resources.items.startStaticMaterial,
-            offset: new THREE.Vector3(this.x, this.y, 0),
+            offset: new THREE.Vector3(this.x, this.y, 1),
             mass: 0,
-            rotation: new THREE.Euler(Math.PI * 0.5, 0, 0),
+            rotation: new THREE.Euler( 0, 0, 0),
         })
     }
 
