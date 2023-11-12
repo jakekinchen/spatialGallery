@@ -28,7 +28,7 @@ export default class IntroSection
        // this.setTitles()
        // this.setTiles()
         this.setDikes()
-        //this.setButtons()
+        this.setButtons()
     }
 
     setStatic()
@@ -277,18 +277,17 @@ export default class IntroSection
         })
     }
 
-    setButtons()
-    {
-        this.buttons = {}
-        this.buttons.add({
+    setButtons() {
+        this.startButton = new Button(this.scene, {
             text: 'Start',
             size: 1,
-            position: new THREE.Vector3(0, - 2, 0),
-            onClick: () =>
-            {
-                this.config.start()
-            }
-        })
+            position: new THREE.Vector3(0, -2, 0),
+            onClick: () => {
+                this.config.start();
+            },
+            // ...other options...
+        });
+        this.scene.add(this.startButton.container);
     }
 
     setTiles()
