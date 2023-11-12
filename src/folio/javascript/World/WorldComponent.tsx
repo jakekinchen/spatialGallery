@@ -5,7 +5,7 @@ export default function WorldComponent() {
   return (
     <>
         <FloorComponent />
-        {/*<IntroSectionComponent />*/}
+        <IntroSectionComponent />
     </>
   );
 }

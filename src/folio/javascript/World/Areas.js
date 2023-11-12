@@ -38,8 +38,8 @@ export default class Areas
         {
             this.mouse.coordinates.x = (_event.clientX / window.innerWidth) * 2 - 1
             this.mouse.coordinates.y = - (_event.clientY / window.innerHeight) * 2 + 1
-
             this.mouse.needsUpdate = true
+            //console.log(this.items);
         })
 
         // Mouse click event

@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
@@ -10,13 +10,17 @@ export default class Button {
     this.renderer = _options.renderer;
     this.camera = _options.camera;
     // make default color a white
-    this.color = _options.color || 0xffffff;
+    this.color = _options.color || 0x00000;
     this.text = _options.text || '';
+    this.time = _options.time
+      this.areas = _options.areas
     this.size = _options.size || .6;
     this.hoverColor = _options.hoverColor || 0xffffff;
-    this.position = _options.position || new THREE.Vector3(0, 4, 2);
+    this.position = _options.position
     this.onClick = _options.onClick || function() {};
+    this.items = []
     this.container = new THREE.Object3D();
+
 
     // Relative path to the font file from the Buttons.js file
     const fontPath = '../../javascript/Comic_Neue_Regular.json';
@@ -46,14 +50,18 @@ export default class Button {
     this.buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
-
+    console.log(this.buttonMesh)
+    this.buttonMesh = this.areas.add({
+        position: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.z),
+        halfExtents: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.y)
+    })
 
     // Add interactivity (implementation needed)
-    this.addInteractivity();
-}
+    //this.addInteractivity();
+    }
 
 
-
+/*
 addInteractivity() {
   // Check if renderer and camera are available
   if (!this.renderer || !this.camera) {
@@ -65,10 +73,10 @@ addInteractivity() {
   const mouse = new THREE.Vector2();
 
   const onMouseMove = (event) => {
+
       // calculate mouse position in normalized device coordinates
       mouse.x = (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1;
       mouse.y = -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1;
-
       // update the picking ray with the camera and mouse position
       raycaster.setFromCamera(mouse, this.camera);
 
@@ -90,9 +98,9 @@ addInteractivity() {
   };
 
   // Add event listeners
-  this.renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+  this.renderer.domElement.addEventListener('mousemove', onMouseMove, true);
   this.renderer.domElement.addEventListener('mousedown', onMouseDown, false);
-}
+}*/
 
 
     setHover(isHover) {
