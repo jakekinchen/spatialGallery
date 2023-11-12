@@ -51,13 +51,16 @@ export default class Button {
     this.buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
-    //console.log(this.buttonMesh)
-    this.buttonMesh = this.areas.add({
+    this.buttonMesh.area = this.areas.add({
+        //Change the position of button here
         position: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.z),
+        //Change size of button here
         halfExtents: new THREE.Vector2(this.buttonMesh.position.x, 0.5)
     })
-    this.buttonMesh.on('interact', () =>
+    this.buttonMesh.area.on('interact', () =>
     {
+      this.buttonMesh.material.map = new THREE.TextureLoader().load("../models/projects/keppler/slideA.jpg");
+      this.buttonMesh.material.needsUpdate = true;
       console.log(this.buttonMesh)
     })
     // Add interactivity (implementation needed)
