@@ -8,8 +8,6 @@ function App() {
 
   return (
     <div className="w-screen h-screen">
-        {//<Leva hidden={!isLevaDebug} collapsed oneLineLabels />
-            }
             <Leva collapsed oneLineLabels />
       <FolioCanvas />
     </div>
