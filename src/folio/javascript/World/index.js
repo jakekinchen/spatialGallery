@@ -405,12 +405,6 @@ export default class
             debug: this.debugFolder
         }
 
-    setButtons()
-    {
-        this.buttons = {}
-        this.buttons.add = (_options) => this.add(_options)
-    }
-    
 
 
         // // Distinction A
