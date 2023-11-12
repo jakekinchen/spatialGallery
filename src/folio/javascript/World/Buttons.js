@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
@@ -14,11 +14,18 @@ export default class Button {
     this.color = _options.color || 0xffffff;
     this.shadows = _options.shadows || false;
     this.text = _options.text || '';
+    this.time = _options.time
+      this.areas = _options.areas
     this.size = _options.size || 0.6;
     this.hoverColor = _options.hoverColor || 0xffffff;
-    this.position = _options.position || new THREE.Vector3(0, 4, 2);
+    this.position = _options.position
     this.onClick = _options.onClick || function() {};
+    this.items = []
     this.container = new THREE.Object3D();
+
+
+    // Relative path to the font file from the Buttons.js file
+    const fontPath = '../../javascript/Comic_Neue_Regular.json';
 
     // Load the font and create the text geometry
     const fontLoader = new FontLoader();
@@ -61,19 +68,29 @@ fontLoader.load(_options.fontPath || '/font.json', (font) => {
     // Set position and add to the container
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
-
-    // Optional: Apply the text material to the button's geometry
+    this.buttonMesh.area = this.areas.add({
+        //Change the position of button here
+        position: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.z),
+        //Change size of button here
+        halfExtents: new THREE.Vector2(this.buttonMesh.position.x, 0.5)
+    })
+    this.buttonMesh.area.on('interact', () =>
+    {
+      this.buttonMesh.material.map = new THREE.TextureLoader().load("../models/projects/keppler/slideA.jpg");
+      this.buttonMesh.material.needsUpdate = true;
+      console.log(this.buttonMesh)
+    })    // Optional: Apply the text material to the button's geometry
     if (_options.applyTextMaterial && this.textMesh) {
       this.buttonMesh.material = this.textMesh.material;
     }
 
     // Add interactivity
-    this.addInteractivity();
-  }
+    //this.addInteractivity();
+      }
 
 
 
-
+/*
 addInteractivity() {
   // Check if renderer and camera are available
   if (!this.renderer || !this.camera) {
@@ -85,10 +102,10 @@ addInteractivity() {
   const mouse = new THREE.Vector2();
 
   const onMouseMove = (event) => {
+
       // calculate mouse position in normalized device coordinates
       mouse.x = (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1;
       mouse.y = -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1;
-
       // update the picking ray with the camera and mouse position
       raycaster.setFromCamera(mouse, this.camera);
 
@@ -110,9 +127,9 @@ addInteractivity() {
   };
 
   // Add event listeners
-  this.renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+  this.renderer.domElement.addEventListener('mousemove', onMouseMove, true);
   this.renderer.domElement.addEventListener('mousedown', onMouseDown, false);
-}
+}*/
 
 
     setHover(isHover) {

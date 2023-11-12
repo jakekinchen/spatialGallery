@@ -76,7 +76,7 @@ export default class
         this.setTiles()
         this.setWalls()
         this.setSections()
-        this.setButtons()
+        //this.setButtons()
         //this.setEasterEggs()
     }
 
@@ -252,12 +252,12 @@ export default class
 
     setButtons()
     {
+        console.log("renderer: " + this.renderer)
         this.button = new Button({
             renderer: this.renderer,
             camera: this.camera,
             resources: this.resources,
             time: this.time,
-            shadows: this.shadows,
             debug: this.debugFolder
         })
         this.container.add(this.button.container)
@@ -420,7 +420,15 @@ export default class
             tiles: this.tiles,
             debug: this.debugFolder
         }
-
+        //setButtons() {
+        this.sections.startButton = new Button( {
+            ...options,
+            position: new THREE.Vector3(1, 3, 5),
+            renderer: this.renderer,
+            camera: this.camera,
+            // ...other options...
+        });
+        this.container.add(this.sections.startButton.container);
 
 
         // // Distinction A
@@ -484,7 +492,7 @@ export default class
         this.container.add(this.sections.projects.container)
 
         // Information
-        this.sections.information = new InformationSection({
+        /*this.sections.information = new InformationSection({
             ...options,
             x: 1.2,
             y: - 55
@@ -492,11 +500,21 @@ export default class
             // y: - 10
         })
         this.container.add(this.sections.information.container)
+            */
 
+        //Playground
+        this.sections.pedestal = new PlaygroundSection({
+            ...options,
+            x: - 38,
+            y: - 34
+            // x: - 15,
+            // y: - 4
+        })
+        //this.container.add(this.sections.playground.container)
         // Start
         this.sections.start = new StartSection({
             ...options,
-            x: 0,
+            x: 5,
             y: 2
         })
         this.container.add(this.sections.start.container)

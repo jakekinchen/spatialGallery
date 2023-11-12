@@ -32,7 +32,6 @@ export default class IntroSection
        // this.setTiles()
         this.setDikes()
         this.setButtons()
-        this.setStatic()
     }
 
     setStatic()
@@ -284,22 +283,20 @@ export default class IntroSection
     }
 
     setButtons() {
-        this.startButton = new Button({
+        this.startButton = new Button( {
             renderer: this.renderer,
             camera: this.camera,
-            position: new THREE.Vector3(0, 0, 0),
-            text: 'My Button',
+            text: 'Start',
             size: 1,
-            usePredefinedGeometry: true,
-            base: this.resources.items.startStaticBase.scene,
+            position: new THREE.Vector3(0, -2, 0),
             onClick: () => {
                 this.config.start();
             },
             // ...other options...
         });
-        
         this.startButton.container = new THREE.Object3D()
-        this.startButton.container.position.set(0, -2, 0);
+        this.startButton.container.position.x = 0
+        this.startButton.container.position.y = - 2
         this.container.add(this.startButton.container);
     }
 
