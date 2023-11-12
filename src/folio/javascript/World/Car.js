@@ -14,7 +14,7 @@ export default class Car
         this.shadows = _options.shadows
         this.materials = _options.materials
         this.controls = _options.controls
-        this.sounds = _options.sounds
+        //this.sounds = _options.sounds
         this.renderer = _options.renderer
         this.camera = _options.camera
         this.debug = _options.debug
@@ -90,12 +90,12 @@ export default class Car
             this.movement.localAcceleration = this.movement.acceleration.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), - this.chassis.object.rotation.z)
 
             // Sound
-            this.sounds.engine.speed = this.movement.localSpeed.x
-            this.sounds.engine.acceleration = this.controls.actions.up ? (this.controls.actions.boost ? 1 : 0.5) : 0
+            //this.sounds.engine.speed = this.movement.localSpeed.x
+            //this.sounds.engine.acceleration = this.controls.actions.up ? (this.controls.actions.boost ? 1 : 0.5) : 0
 
             if(this.movement.localAcceleration.x > 0.01)
             {
-                this.sounds.play('screech')
+                //this.sounds.play('screech')
             }
         })
     }
@@ -352,7 +352,7 @@ export default class Car
         window.addEventListener('keydown', (_event) =>
         {
             // Play horn sound
-            if(_event.key === 'h' && this.klaxon.can)
+            /*if(_event.key === 'h' && this.klaxon.can)
             {
                 this.klaxon.can = false
                 window.setTimeout(() =>
@@ -382,7 +382,7 @@ export default class Car
                     soundName: 'horn',
                     sleep: false
                 })
-            }
+            }*/
         })
     }
 }

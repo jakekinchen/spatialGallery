@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import Materials from './Materials.js'
-import Floor from './Floor.js'
 import Shadows from './Shadows.js'
 import Physics from './Physics.js'
 import Zones from './Zones.js'
@@ -20,7 +19,7 @@ import StartSection from './Sections/StartSection.js'
 // import DistinctionCSection from './Sections/DistinctionCSection.js'
 // import DistinctionDSection from './Sections/DistinctionDSection.js'
 import Controls from './Controls.js'
-import Sounds from './Sounds.js'
+//import Sounds from './Sounds.js'
 import { TweenLite } from 'gsap/TweenLite'
 import { Power2 } from 'gsap/EasePack'
 import EasterEggs from './EasterEggs.js'
@@ -51,9 +50,8 @@ export default class
         this.container.matrixAutoUpdate = false
 
         // this.setAxes()
-        this.setSounds()
+        //this.setSounds()
         this.setControls()
-        this.setFloor()
         this.setAreas()
         this.setStartingScreen()
     }
@@ -113,10 +111,10 @@ export default class
             }, 300)
 
             // Sound
-            TweenLite.fromTo(this.sounds.engine.volume, 0.5, { master: 0 }, { master: 0.7, delay: 0.3, ease: Power2.easeIn })
+            //TweenLite.fromTo(this.sounds.engine.volume, 0.5, { master: 0 }, { master: 0.7, delay: 0.3, ease: Power2.easeIn })
             window.setTimeout(() =>
             {
-                this.sounds.play('reveal')
+                //this.sounds.play('reveal')
             }, 400)
 
             // Controls
@@ -280,15 +278,6 @@ export default class
             resources: this.resources,
             debug: this.debugFolder
         })
-    }
-
-    setFloor()
-    {
-        this.floor = new Floor({
-            debug: this.debugFolder
-        })
-
-        this.container.add(this.floor.container)
     }
 
     setShadows()

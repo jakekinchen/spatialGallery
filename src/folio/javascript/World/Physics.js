@@ -10,7 +10,7 @@ export default class Physics
         this.time = _options.time
         this.sizes = _options.sizes
         this.controls = _options.controls
-        this.sounds = _options.sounds
+        //this.sounds = _options.sounds
 
         // Set up
         if(this.debug)
@@ -194,7 +194,7 @@ export default class Physics
                 if(_event.body.mass === 0)
                 {
                     const relativeVelocity = _event.contact.getImpactVelocityAlongNormal()
-                    this.sounds.play('carHit', relativeVelocity)
+                    //this.sounds.play('carHit', relativeVelocity)
                 }
             })
 

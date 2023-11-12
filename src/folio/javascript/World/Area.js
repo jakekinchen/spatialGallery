@@ -19,7 +19,7 @@ export default class Area extends EventEmitter
         this.renderer = _options.renderer
         this.resources = _options.resources
         this.car = _options.car
-        this.sounds = _options.sounds
+        //this.sounds = _options.sounds
         this.time = _options.time
         this.position = _options.position
         this.halfExtents = _options.halfExtents
@@ -195,7 +195,7 @@ export default class Area extends EventEmitter
         }
 
         // Play sound
-        this.sounds.play('uiArea')
+        //this.sounds.play('uiArea')
 
         this.trigger('interact')
     }

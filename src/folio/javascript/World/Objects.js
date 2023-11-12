@@ -9,7 +9,7 @@ export default class Objects {
         this.materials = _options.materials;
         this.physics = _options.physics;
         this.shadows = _options.shadows;
-        this.sounds = _options.sounds;
+        //this.sounds = _options.sounds;
         this.debug = _options.debug;
 
         // Set up
@@ -102,7 +102,7 @@ export default class Objects {
                         _options.floorShadowTexture;
                     material.uniforms.uShadowColor.value = new THREE.Color(
                         this.materials.items.floorShadow.shadowColor
-                    );
+                    ).convertLinearToSRGB();
                     material.uniforms.uAlpha.value = 0;
 
                     const mesh = new THREE.Mesh(geometry, material);
@@ -312,6 +312,7 @@ export default class Objects {
         }
 
         // Sound
+        /*
         if (_options.soundName) {
             object.collision.body.addEventListener("collide", (_event) => {
                 const relativeVelocity =
@@ -319,7 +320,7 @@ export default class Objects {
                 this.sounds.play(_options.soundName, relativeVelocity);
             });
         }
-
+*/
         // Shadow
         // Add shadow
         if (_options.shadow) {

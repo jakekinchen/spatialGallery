@@ -13,7 +13,6 @@ export default class Camera
         this.renderer = _options.renderer
         this.debug = _options.debug
         this.config = _options.config
-
         // Set up
         this.container = new THREE.Object3D()
         this.container.matrixAutoUpdate = false
@@ -38,9 +37,7 @@ export default class Camera
 
     setAngle()
     {
-        // Set up
         this.angle = {}
-
         // Items
         this.angle.items = {
             default: new THREE.Vector3(1.135, - 1.45, 1.15),
@@ -345,4 +342,5 @@ export default class Camera
             this.debugFolder.add(this.orbitControls, 'enabled').name('orbitControlsEnabled')
         }
     }
+
 }
