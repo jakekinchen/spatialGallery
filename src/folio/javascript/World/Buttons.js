@@ -6,83 +6,76 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 
 export default class Button {
   constructor(_options) {
-    console.log('Options: ', _options);
+    // Basic setup
+    console.log("_options.position", _options.position)
     this.renderer = _options.renderer;
     this.camera = _options.camera;
-    this.usePredefinedGeometry = _options.usePredefinedGeometry || true;
-    // Default color to white
+    this.usePredefinedGeometry = _options.usePredefinedGeometry !== undefined ? _options.usePredefinedGeometry : true;
     this.color = _options.color || 0xffffff;
     this.shadows = _options.shadows || false;
     this.text = _options.text || '';
-    this.time = _options.time
-      this.areas = _options.areas
-    this.size = _options.size || 0.6;
+    this.size = _options.size || 1;
     this.hoverColor = _options.hoverColor || 0xffffff;
-    this.position = _options.position
     this.onClick = _options.onClick || function() {};
-    this.items = []
     this.container = new THREE.Object3D();
+    this.items = [];
 
-
-    // Relative path to the font file from the Buttons.js file
-    const fontPath = '../../javascript/Comic_Neue_Regular.json';
+    // Ensure this.position is a THREE.Vector3
+    this.position = _options.position instanceof THREE.Vector3 ? _options.position : new THREE.Vector3();
 
     // Load the font and create the text geometry
     const fontLoader = new FontLoader();
-fontLoader.load(_options.fontPath || '/font.json', (font) => {
-  const textMaterial = new THREE.MeshBasicMaterial({ color: this.hoverColor });
-  const textShapes = font.generateShapes(this.text, this.size);
-  const textGeometry = new THREE.ShapeGeometry(textShapes);
+    fontLoader.load(_options.fontPath || '/font.json', (font) => {
+      const textMaterial = new THREE.MeshBasicMaterial({ color: this.hoverColor });
+      const textShapes = font.generateShapes(this.text, this.size);
+      const textGeometry = new THREE.ShapeGeometry(textShapes);
 
-  // Center the text geometry
-  textGeometry.computeBoundingBox();
-  const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
-  const textHeight = textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y;
+      // Center the text geometry
+      textGeometry.computeBoundingBox();
+      const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
+      const textHeight = textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y;
 
-  this.textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      // Adjust the size of the text here as needed to fit the button
+      const desiredTextWidth = this.size * 1.6; // for example, make the text width a bit less than the button width
+      const scale = desiredTextWidth / textWidth;
+      this.textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
-  // Calculate the centered position for the text relative to the button
-  const textOffsetX = -0.5 * textWidth;
-  const textOffsetY = -0.5 * textHeight;
-  const textOffsetZ = 0.1; // Raise text slightly above the button to avoid z-fighting
+      // Apply scale to the text mesh
+      this.textMesh.scale.set(scale, scale, 1);
 
-  // Apply the text position offset based on the button position
-  // Assuming this.position refers to the center of the button mesh
-  this.textMesh.position.x = this.position.x + textOffsetX;
-  this.textMesh.position.y = this.position.y + textOffsetY;
-  this.textMesh.position.z = .3 / 2 + textOffsetZ;
+      // Adjust position offsets
+      this.textMesh.position.set(
+        this.position.x - (textWidth * scale) / 2,
+        this.position.y - (textHeight * scale) / 2 - 0.3,
+        this.position.z  // You might need to adjust this to ensure the text is not intersecting the button
+      );
 
-  this.container.add(this.textMesh);
-});
+      this.textMesh.rotation.x = Math.PI / 2;
 
-    // Conditionally create button geometry based on usePredefinedGeometry flag
-    if (_options.usePredefinedGeometry) {
-      this.buttonMesh = _options.base.clone(); // Clone ensures we don't modify the original
-    } else {
-      // Create a geometry with rounded corners
-      const buttonGeometry = new RoundedBoxGeometry(this.size * 2, this.size, .3, 5, 0.1);
-      buttonGeometry.rotateX(Math.PI / 2); // Make it vertical
-      this.buttonMesh = new THREE.Mesh(buttonGeometry, new THREE.MeshBasicMaterial({ color: this.color }));
-    }
+      this.container.add(this.textMesh);
+    });
 
-    // Set position and add to the container
+    // Create button geometry
+    this.buttonMesh = this.usePredefinedGeometry && _options.base ? 
+      _options.base.clone() : 
+      new THREE.Mesh(
+        new RoundedBoxGeometry(this.size * 2, this.size, 0.3, 5, 0.1),
+        new THREE.MeshBasicMaterial({
+          color: this.color,
+          specular: 0x050505,
+          shininess: 100
+        })
+        
+      );
+      // rotate it by 90 degrees on X
+      this.buttonMesh.rotation.x = Math.PI / 2;
+      // increase the y position a bit
+      this.buttonMesh.position.y = 10;
+
+    // Position the button mesh
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
-    this.buttonMesh.area = this.areas.add({
-        //Change the position of button here
-        position: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.z),
-        //Change size of button here
-        halfExtents: new THREE.Vector2(this.buttonMesh.position.x, 0.5)
-    })
-    this.buttonMesh.area.on('interact', () =>
-    {
-      this.buttonMesh.material.map = new THREE.TextureLoader().load("../models/projects/keppler/slideA.jpg");
-      this.buttonMesh.material.needsUpdate = true;
-      console.log(this.buttonMesh)
-    })    // Optional: Apply the text material to the button's geometry
-    if (_options.applyTextMaterial && this.textMesh) {
-      this.buttonMesh.material = this.textMesh.material;
-    }
+
 
     // Add interactivity
     //this.addInteractivity();

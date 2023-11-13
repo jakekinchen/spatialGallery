@@ -71,12 +71,11 @@ export default class
         this.setZones()
         this.setObjects()
         this.setCar()
-        this.setButtons()
+       // this.setButtons()
         this.areas.car = this.car
         this.setTiles()
         this.setWalls()
         this.setSections()
-        //this.setButtons()
         //this.setEasterEggs()
     }
 
@@ -252,7 +251,6 @@ export default class
 
     setButtons()
     {
-        console.log("renderer: " + this.renderer)
         this.button = new Button({
             renderer: this.renderer,
             camera: this.camera,
@@ -421,14 +419,14 @@ export default class
             debug: this.debugFolder
         }
         //setButtons() {
-        this.sections.startButton = new Button( {
-            ...options,
-            position: new THREE.Vector3(1, 3, 5),
-            renderer: this.renderer,
-            camera: this.camera,
-            // ...other options...
-        });
-        this.container.add(this.sections.startButton.container);
+        // this.sections.startButton = new Button( {
+        //     ...options,
+        //     position: new THREE.Vector3(1, 3, 3),
+        //     renderer: this.renderer,
+        //     camera: this.camera,
+        //     // ...other options...
+        // });
+        // this.container.add(this.sections.startButton.container);
 
 
         // // Distinction A

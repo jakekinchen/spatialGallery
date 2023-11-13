@@ -288,15 +288,15 @@ export default class IntroSection
             camera: this.camera,
             text: 'Start',
             size: 1,
-            position: new THREE.Vector3(0, -2, 0),
-            onClick: () => {
-                this.config.start();
-            },
+            position: new THREE.Vector3(0, 5, 2),
+            color: 0xd3d3d3,
+            usePredefinedGeometry: true,
+            // onClick: () => {
+            //     this.config.start();
+            // },
             // ...other options...
         });
-        this.startButton.container = new THREE.Object3D()
-        this.startButton.container.position.x = 0
-        this.startButton.container.position.y = - 2
+        //this.startButton.container = new THREE.Object3D() commented out because it is already defined in the Button class
         this.container.add(this.startButton.container);
     }
 
