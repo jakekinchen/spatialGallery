@@ -496,7 +496,7 @@ export default class
             // y: - 10
         })
         this.container.add(this.sections.information.container)
-            */
+
 
         //Playground
         this.sections.pedestal = new PlaygroundSection({
@@ -507,6 +507,8 @@ export default class
             // y: - 4
         })
         //this.container.add(this.sections.playground.container)
+        */
+
         // Pedestal
         this.sections.start = new StartSection({
             ...options,
@@ -517,12 +519,16 @@ export default class
         //Board
         this.sections.board = new Board({
             ...options,
+            renderer: this.renderer,
+            camera: this.camera,
             position: new THREE.Vector3(-10, 5, 0),
             x: - 10,
             y: 5
             // x: - 15,
             // y: - 4
         })
+        this.container.add(this.sections.board.container)
+        /*
         //Playground
         this.sections.playground = new PlaygroundSection({
             ...options,
@@ -532,8 +538,9 @@ export default class
             // y: - 4
         })
         this.container.add(this.sections.playground.container)
+        */
     }
-
+/*
     setEasterEggs()
     {
         this.easterEggs = new EasterEggs({
@@ -548,4 +555,5 @@ export default class
         })
         this.container.add(this.easterEggs.container)
     }
+    */
 }

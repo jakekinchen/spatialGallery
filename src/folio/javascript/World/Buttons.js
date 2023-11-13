@@ -58,14 +58,13 @@ export default class Button {
     });
 
     // Create button geometry
+
     this.buttonMesh = this.usePredefinedGeometry && _options.base ? 
       _options.base.clone() : 
       new THREE.Mesh(
         new RoundedBoxGeometry(this.size * 2, this.size, 0.3, 5, 0.1),
         new THREE.MeshBasicMaterial({
           color: this.color,
-          specular: 0x050505,
-          shininess: 100
         })
         
       );

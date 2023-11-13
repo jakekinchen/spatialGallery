@@ -296,10 +296,6 @@ const Folio = (props) => {
     });
   }, []);*/
   useEffect(() =>{
-    console.log(camera.current)
-    console.log(camera.current.orbitControls)
-    console.log(camera.current.instance)
-    console.log(world.current.car)
     camera.current.angle.value.x = props.cameraX;
     camera.current.angle.value.y = props.cameraY;
     camera.current.angle.value.z = props.cameraZ;
