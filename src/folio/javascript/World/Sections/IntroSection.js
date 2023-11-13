@@ -24,24 +24,26 @@ export default class IntroSection
         this.container.matrixAutoUpdate = false
         this.container.updateMatrix()
 
-        // this.setStatic()
+         
         
         this.setInstructions()
         this.setOtherInstructions()
        // this.setTitles()
        // this.setTiles()
         this.setDikes()
-        //this.setButtons()
+        this.setButtons()
     }
 
     setStatic()
     {
         this.objects.add({
-            base: this.resources.items.introStaticBase.scene,
-            collision: this.resources.items.introStaticCollision.scene,
-            floorShadowTexture: this.resources.items.introStaticFloorShadowTexture,
-            offset: new THREE.Vector3(0, 0, 0),
-            mass: 0
+            base: this.resources.items.startStaticBase.scene,
+            collision: this.resources.items.startStaticCollision.scene,
+            floorShadowTexture: this.resources.items.startStaticFloorShadowTexture,
+            material : this.resources.items.startStaticMaterial,
+            offset: new THREE.Vector3(this.x, this.y, 0),
+            mass: 0,
+            rotation: new THREE.Euler(Math.PI * 0.5, 0, 0),
         })
     }
 
@@ -280,6 +282,23 @@ export default class IntroSection
         })
     }
 
+    setButtons() {
+        this.startButton = new Button( {
+            renderer: this.renderer,
+            camera: this.camera,
+            text: 'Start',
+            size: 1,
+            position: new THREE.Vector3(0, 5, 2),
+            color: 0xd3d3d3,
+            usePredefinedGeometry: true,
+            // onClick: () => {
+            //     this.config.start();
+            // },
+            // ...other options...
+        });
+        //this.startButton.container = new THREE.Object3D() commented out because it is already defined in the Button class
+        this.container.add(this.startButton.container);
+    }
 
     setTiles()
     {
@@ -288,6 +307,8 @@ export default class IntroSection
             delta: new THREE.Vector2(0, - 4.5)
         })
     }
+
+    
 
     setDikes()
     {

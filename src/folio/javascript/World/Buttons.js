@@ -6,94 +6,82 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 
 export default class Button {
   constructor(_options) {
-    console.log('Options: ', _options)
+    // Basic setup
+    console.log("_options.position", _options.position)
     this.renderer = _options.renderer;
     this.camera = _options.camera;
-    // make default color a white
+    this.usePredefinedGeometry = _options.usePredefinedGeometry !== undefined ? _options.usePredefinedGeometry : true;
     this.color = _options.color || 0xffffff;
+    this.shadows = _options.shadows || false;
     this.text = _options.text || '';
-    this.time = _options.time
-    this.areas = _options.areas
     this.size = _options.size || .6;
+    this.size = _options.size || 1;
+
     this.hoverColor = _options.hoverColor || 0xffffff;
-    this.position = _options.position
     this.onClick = _options.onClick || function() {};
-    this.items = []
     this.container = new THREE.Object3D();
+    this.items = [];
 
-
-    // Relative path to the font file from the Buttons.js file
-    const fontPath = '../../javascript/Comic_Neue_Regular.json';
+    // Ensure this.position is a THREE.Vector3
+    this.position = _options.position instanceof THREE.Vector3 ? _options.position : new THREE.Vector3();
 
     // Load the font and create the text geometry
     const fontLoader = new FontLoader();
-    fontLoader.load(fontPath, (font) => {
+    fontLoader.load(_options.fontPath || '/font.json', (font) => {
       const textMaterial = new THREE.MeshBasicMaterial({ color: this.hoverColor });
       const textShapes = font.generateShapes(this.text, this.size);
       const textGeometry = new THREE.ShapeGeometry(textShapes);
-      textGeometry.computeBoundingBox();
-      
+
       // Center the text geometry
+      textGeometry.computeBoundingBox();
       const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
       const textHeight = textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y;
-      textGeometry.translate(-0.5 * textWidth, -0.5 * textHeight, 0.1); // Adjust the 0.1 if needed
-      
+
+      // Adjust the size of the text here as needed to fit the button
+      const desiredTextWidth = this.size * 1.6; // for example, make the text width a bit less than the button width
+      const scale = desiredTextWidth / textWidth;
       this.textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+      // Apply scale to the text mesh
+      this.textMesh.scale.set(scale, scale, 1);
+
+      // Adjust position offsets
+      this.textMesh.position.set(
+        this.position.x - (textWidth * scale) / 2,
+        this.position.y - (textHeight * scale) / 2 - 0.3,
+        this.position.z  // You might need to adjust this to ensure the text is not intersecting the button
+      );
+
+      this.textMesh.rotation.x = Math.PI / 2;
+
       this.container.add(this.textMesh);
     });
 
-    // Button geometry with rounded corners
-    const buttonGeometry = new RoundedBoxGeometry(this.size * 2, this.size, .3, 5, 1);
-    // Adjust the 0.1 thickness and 0.05 borderRadius as needed
-    const buttonMaterial = new THREE.MeshBasicMaterial({ color: this.color });
-    // Rotate the button by 90 degrees to make it vertical
-    buttonGeometry.rotateX(Math.PI / 2);
-    this.buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+    // Create button geometry
+    this.buttonMesh = this.usePredefinedGeometry && _options.base ? 
+      _options.base.clone() : 
+      new THREE.Mesh(
+        new RoundedBoxGeometry(this.size * 2, this.size, 0.3, 5, 0.1),
+        new THREE.MeshBasicMaterial({
+          color: this.color,
+          specular: 0x050505,
+          shininess: 100
+        })
+        
+      );
+      // rotate it by 90 degrees on X
+      this.buttonMesh.rotation.x = Math.PI / 2;
+      // increase the y position a bit
+      this.buttonMesh.position.y = 10;
+
+    // Position the button mesh
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
-/*
-    this.buttonMesh.area = this.areas.add({
-        //Change the position of button here
-        position: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.z),
-        //Change size of button here
-        halfExtents: new THREE.Vector2(this.buttonMesh.position.x, 0.5)
-    })
 
-    const fileInput = document.getElementById('fileInput');
-    this.buttonMesh.area.on('interact', () =>
-    {
-      fileInput.click();
-      this.buttonMesh.material.needsUpdate = true;
-      console.log(this.buttonMesh)
-    })
-
-    fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-    
-      if (file) {
-        const reader = new FileReader();
-    
-        reader.onload = function (e) {
-          const texture = new THREE.TextureLoader().load(e.target.result);
-          this.buttonMesh.material.map = texture;
-          this.buttonMesh.material.needsUpdate = true;
-          console.log("Button mesh: ");
-          console.log(this.buttonMesh);
-        }.bind(this);
-    
-        reader.readAsDataURL(file);
-      }
-    });
-    */
-    // this.buttonMesh.area.on('interact', () =>
-    // {
-    //   this.buttonMesh.material.map = new THREE.TextureLoader().load("../models/projects/keppler/slideA.jpg");
-    //   this.buttonMesh.material.needsUpdate = true;
-    //   console.log(this.buttonMesh)
-    // })
-    // Add interactivity (implementation needed)
+    // Add interactivity
     //this.addInteractivity();
-    }
+      }
+
 
 
 /*

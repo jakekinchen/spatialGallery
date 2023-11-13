@@ -68,12 +68,11 @@ export default class
         this.setZones()
         this.setObjects()
         this.setCar()
-        console.log("renderer: " + this.renderer)
+       // this.setButtons()
         this.areas.car = this.car
         this.setTiles()
         this.setWalls()
         this.setSections()
-        //this.setButtons()
         //this.setEasterEggs()
     }
 
@@ -247,6 +246,18 @@ export default class
         })
     }
 
+    setButtons()
+    {
+        this.button = new Button({
+            renderer: this.renderer,
+            camera: this.camera,
+            resources: this.resources,
+            time: this.time,
+            debug: this.debugFolder
+        })
+        this.container.add(this.button.container)
+    }
+
     setSounds()
     {
         this.sounds = new Sounds({
@@ -404,15 +415,15 @@ export default class
             tiles: this.tiles,
             debug: this.debugFolder
         }
-
-        this.sections.startButton = new Button( {
-            ...options,
-            position: new THREE.Vector3(1, 3, 5),
-            renderer: this.renderer,
-            camera: this.camera,
-            // ...other options...
-        });
-        this.container.add(this.sections.startButton.container);
+        //setButtons() {
+        // this.sections.startButton = new Button( {
+        //     ...options,
+        //     position: new THREE.Vector3(1, 3, 3),
+        //     renderer: this.renderer,
+        //     camera: this.camera,
+        //     // ...other options...
+        // });
+        // this.container.add(this.sections.startButton.container);
 
 
         // // Distinction A
