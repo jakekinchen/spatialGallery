@@ -59,7 +59,7 @@ export default class Car
         // Default
         else
         {
-            this.models.chassis = this.resources.items.carDefaultChassis
+            this.models.chassis = this.resources.items.brickBase
             //this.models.antena = this.resources.items.carDefaultAntena
             // this.models.bunnyEarLeft = this.resources.items.carDefaultBunnyEarLeft
             // this.models.bunnyEarRight = this.resources.items.carDefaultBunnyEarRight
@@ -109,7 +109,7 @@ export default class Car
         this.chassis.oldPosition = this.chassis.object.position.clone()
         this.container.add(this.chassis.object)
 
-        this.shadows.add(this.chassis.object, { sizeX: 3, sizeY: 2, offsetZ: 0.2 })
+        this.shadows.add(this.chassis.object, { sizeX: 1, sizeY: 1, offsetZ: 0.2 })
 
         // Time tick
         this.time.on('tick', () =>
