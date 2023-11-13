@@ -15,10 +15,7 @@ import CrossroadsSection from './Sections/CrossroadsSection.js'
 import InformationSection from './Sections/InformationSection.js'
 import PlaygroundSection from './Sections/PlaygroundSection.js'
 import StartSection from './Sections/StartSection.js'
-// import DistinctionASection from './Sections/DistinctionASection.js'
-// import DistinctionBSection from './Sections/DistinctionBSection.js'
-// import DistinctionCSection from './Sections/DistinctionCSection.js'
-// import DistinctionDSection from './Sections/DistinctionDSection.js'
+import Board from './Board'
 import Controls from './Controls.js'
 //import Sounds from './Sounds.js'
 import { TweenLite } from 'gsap/TweenLite'
@@ -407,7 +404,7 @@ export default class
             tiles: this.tiles,
             debug: this.debugFolder
         }
-        //setButtons() {
+
         this.sections.startButton = new Button( {
             ...options,
             position: new THREE.Vector3(1, 3, 5),
@@ -469,6 +466,7 @@ export default class
         // this.container.add(this.sections.crossroads.container)
 
         // Projects
+        /*
         this.sections.projects = new ProjectsSection({
             ...options,
             x: 10,
@@ -477,7 +475,7 @@ export default class
             // y: 0
         })
         this.container.add(this.sections.projects.container)
-
+            */
         // Information
         /*this.sections.information = new InformationSection({
             ...options,
@@ -498,14 +496,22 @@ export default class
             // y: - 4
         })
         //this.container.add(this.sections.playground.container)
-        // Start
+        // Pedestal
         this.sections.start = new StartSection({
             ...options,
-            x: 5,
+            x: 10,
             y: 2
         })
         this.container.add(this.sections.start.container)
-
+        //Board
+        this.sections.board = new Board({
+            ...options,
+            position: new THREE.Vector3(-10, 5, 0),
+            x: - 10,
+            y: 5
+            // x: - 15,
+            // y: - 4
+        })
         //Playground
         this.sections.playground = new PlaygroundSection({
             ...options,

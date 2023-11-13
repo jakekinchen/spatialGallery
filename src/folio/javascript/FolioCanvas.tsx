@@ -13,7 +13,7 @@ export default function FolioCanvas() {
             x: { value: 1.135, min: -4, max: 4, step: 0.01 },
             y: { value: -1.45, min: -4, max: 4, step: 0.01 },
             z: { value: 1.15, min: -4, max: 4, step: 0.01 },
-            Pan: true,
+            Pan: false,
         }
 
     },[])

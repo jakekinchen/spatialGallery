@@ -13,7 +13,7 @@ export default class Button {
     this.color = _options.color || 0xffffff;
     this.text = _options.text || '';
     this.time = _options.time
-      this.areas = _options.areas
+    this.areas = _options.areas
     this.size = _options.size || .6;
     this.hoverColor = _options.hoverColor || 0xffffff;
     this.position = _options.position
@@ -51,6 +51,7 @@ export default class Button {
     this.buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
+/*
     this.buttonMesh.area = this.areas.add({
         //Change the position of button here
         position: new THREE.Vector3(this.buttonMesh.position.x, this.buttonMesh.position.y,this.buttonMesh.position.z),
@@ -76,13 +77,14 @@ export default class Button {
           const texture = new THREE.TextureLoader().load(e.target.result);
           this.buttonMesh.material.map = texture;
           this.buttonMesh.material.needsUpdate = true;
+          console.log("Button mesh: ");
           console.log(this.buttonMesh);
         }.bind(this);
     
         reader.readAsDataURL(file);
       }
     });
-
+    */
     // this.buttonMesh.area.on('interact', () =>
     // {
     //   this.buttonMesh.material.map = new THREE.TextureLoader().load("../models/projects/keppler/slideA.jpg");
