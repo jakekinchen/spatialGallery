@@ -57,12 +57,38 @@ export default class Button {
         //Change size of button here
         halfExtents: new THREE.Vector2(this.buttonMesh.position.x, 0.5)
     })
+
+    const fileInput = document.getElementById('fileInput');
     this.buttonMesh.area.on('interact', () =>
     {
-      this.buttonMesh.material.map = new THREE.TextureLoader().load("../models/projects/keppler/slideA.jpg");
+      fileInput.click();
       this.buttonMesh.material.needsUpdate = true;
       console.log(this.buttonMesh)
     })
+
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+    
+      if (file) {
+        const reader = new FileReader();
+    
+        reader.onload = function (e) {
+          const texture = new THREE.TextureLoader().load(e.target.result);
+          this.buttonMesh.material.map = texture;
+          this.buttonMesh.material.needsUpdate = true;
+          console.log(this.buttonMesh);
+        }.bind(this);
+    
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // this.buttonMesh.area.on('interact', () =>
+    // {
+    //   this.buttonMesh.material.map = new THREE.TextureLoader().load("../models/projects/keppler/slideA.jpg");
+    //   this.buttonMesh.material.needsUpdate = true;
+    //   console.log(this.buttonMesh)
+    // })
     // Add interactivity (implementation needed)
     //this.addInteractivity();
     }
