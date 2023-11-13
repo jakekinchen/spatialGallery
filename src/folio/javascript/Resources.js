@@ -175,6 +175,7 @@ import webbyTrophyCollisionSource from '../models/webbyTrophy/collision.glb'
 // Lemon
 import lemonBaseSource from '../models/lemon/base.glb'
 import lemonCollisionSource from '../models/lemon/collision.glb'
+import hexaBaseSource from '../models/lemon/hexa.glb'
 
 // Bowling ball
 import bowlingBallBaseSource from '../models/bowlingBall/base.glb'
@@ -401,6 +402,8 @@ export default class Resources extends EventEmitter
             // Lemon
             { name: 'lemonBase', source: lemonBaseSource },
             { name: 'lemonCollision', source: lemonCollisionSource },
+            { name: 'hexaBase', source: hexaBaseSource },
+
 
             // Bownling ball
             { name: 'bowlingBallBase', source: bowlingBallBaseSource },

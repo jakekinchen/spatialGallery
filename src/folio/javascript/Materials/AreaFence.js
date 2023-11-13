@@ -6,9 +6,10 @@ import shaderVertex from '../../shaders/areaFence/vertex.glsl'
 export default function()
 {
     const uniforms = {
+        uColor: { value: null },
         uTime: { value: null },
         uBorderAlpha: { value: null },
-        uStrikeAlpha: { value: null }
+        uStrikeAlpha: { value: null },
     }
 
     const material = new THREE.ShaderMaterial({

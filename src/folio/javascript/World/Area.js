@@ -94,11 +94,11 @@ export default class Area extends EventEmitter
         this.fence.geometry = new AreaFenceBufferGeometry(this.halfExtents.x * 2, this.halfExtents.y * 2, this.fence.depth)
 
         // Material
-        // this.fence.material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.5 })
+        //this.fence.material = new THREE.MeshBasicMaterial({ color: 0xFF5733, wireframe: false, transparent: true, opacity: 0.5 })
         this.fence.material = new AreaFenceMaterial()
         this.fence.material.uniforms.uBorderAlpha.value = 0.5
         this.fence.material.uniforms.uStrikeAlpha.value = 0.25
-
+        this.fence.material.uniforms.uColor.value = new THREE.Color(0xFF5733)
         // Mesh
         this.fence.mesh = new THREE.Mesh(this.fence.geometry, this.fence.material)
         this.fence.mesh.position.z = - this.fence.depth

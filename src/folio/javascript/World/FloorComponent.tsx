@@ -10,7 +10,7 @@ export default function FloorComponent() {
           {
             Color: { value: "#70c8d8", label: "Floor color" },
           },
-          { collapsed: true, color: LEVA_FOLDERS.floor.color }
+          { collapsed: false, color: LEVA_FOLDERS.floor.color }
         ),
       },
       { collapsed: true, color: LEVA_FOLDERS.materials.color }
