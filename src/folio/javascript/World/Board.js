@@ -30,12 +30,12 @@ export default class Board
         this.setBoard()
 
 
-        const planeGeometry = new RoundedBoxGeometry( 4.9, 2.9,.1, 5, 1);
+        const planeGeometry = new RoundedBoxGeometry( 4.85, 2.8,.1, 8, 1);
         const planeMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} );
         this.planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
         this.planeMesh.position.x = this.x
         this.planeMesh.position.y = this.y+0.1
-        this.planeMesh.position.z = 3
+        this.planeMesh.position.z = 3.15
         this.planeMesh.rotation.x = -4.7;
         this.planeMesh.rotation.y = 0.1;
         this.container.add(this.planeMesh);
@@ -79,6 +79,34 @@ export default class Board
             base: this.resources.items.projectsBoardStructure.scene,
             collision: this.resources.items.projectsBoardCollision.scene,
             floorShadowTexture: this.resources.items.projectsBoardStructureFloorShadowTexture,
+            offset: new THREE.Vector3(this.x, this.y, 1),
+            rotation: new THREE.Euler(0, 0, 18.5),
+            duplicated: true,
+            mass: 0
+        })
+    }
+
+    addFloorButton() {
+        const planeGeometry = new RoundedBoxGeometry( 4.85, 2.8,.1, 8, 1);
+        const planeMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+        this.planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
+        this.planeMesh.position.x = this.x
+        this.planeMesh.position.y = this.y+0.1
+        this.planeMesh.position.z = 3.1
+        this.planeMesh.rotation.x = -4.7;
+        this.planeMesh.rotation.y = 0.1;
+        this.container.add(this.planeMesh);
+    }
+
+    setCanvas(){
+        // set a gray material and texture
+        const material = new THREE.MeshBasicMaterial({ color: 0x808080 });
+        material.map = this.resources.items.areaResetTexture;
+        return this.objects.add({
+            base: this.resources.items.projectsBoardPlane.scene,
+            collision: this.resources.items.projectsBoardCollision.scene,
+            material: material,
+            shadow: true,
             offset: new THREE.Vector3(this.x, this.y, 1),
             rotation: new THREE.Euler(0, 0, 18.5),
             duplicated: true,

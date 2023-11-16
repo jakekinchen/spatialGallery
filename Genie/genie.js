@@ -1,21 +1,21 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const fsPromises = require('fs').promises; // Make sure to use the promises version for async/await
-const OpenAI = require('openai'); // Import the OpenAI API wrapper
-const dotenv = require('dotenv'); // Import dotenv to load environment variables
-const path = require('path'); // Import path to work with file paths
+// Import required modules
+import fs from 'fs';
+import fsPromises from 'fs/promises';
+import OpenAI from 'openai';
+import dotenv from 'dotenv';
+import path from 'path';
+import readline from 'readline';
+import { createAndUploadAssistant, uploadFileIntoAssistant } from './createAssistant.js';
+import { createJSONDocument } from './createFile.js';
+import { listFiles, listAssistantFiles, listAssistantDetails, uploadFile, deleteFile, deleteAssistantFile, retrieveFileInfo, retrieveFileContent, getActiveAssistant, deleteAllAssistants, listAssistants} from './openaiMethods.js';
+import { uploadCodebase } from './config.js';
+import process from 'process';
 
-const { createAndUploadAssistant, uploadFileIntoAssistant } = require('./createAssistant');
-const { createJSONDocument } = require('./createFile');
-const { listFiles, listAssistantFiles, listAssistantDetails, uploadFile, deleteFile, deleteAssistantFile, retrieveFileInfo, retrieveFileContent, getActiveAssistant, deleteAllAssistants, listAssistants} = require('./openaiMethods');
-
-dotenv.config({path: 'Genie/.env'}); // Load the environment variables from a .env file
+// Configure dotenv to load environment variables from .env file
+dotenv.config({path: 'Genie/.env'});
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
-
-const readline = require('readline');
-const { create } = require('domain');
-const { uploadCodebase } = require('./config');
 
 // Create readline interface for CLI interaction
 const rl = readline.createInterface({
@@ -87,36 +87,47 @@ async function runAssistant(threadId, assistantId) {
     if (!assistantId) {
         throw new Error('Invalid assistant ID provided to runAssistant function.');
       }
-  run = await openai.beta.threads.runs.create(threadId, {
+  const run = await openai.beta.threads.runs.create(threadId, {
     assistant_id: assistantId
   });
     return run.id;
 }
 
 // Function to retrieve and display the assistant's response
-async function displayResponse(threadId) {
-    const messages = await openai.beta.threads.messages.list(threadId);
-    messages.data.forEach(message => {
-      if (message.content && Array.isArray(message.content)) {
-        // Assuming message.content is an array of objects with 'text' objects
-        message.content.forEach(contentPart => {
-          if (contentPart.type === 'text' && contentPart.text && contentPart.text.value) {
-            console.log(`${message.role}: ${contentPart.text.value}`);
-          }
-        });
-      } else if (typeof message.content === 'string') {
-        // If content is just a string, display it directly
-        console.log(`${message.role}: ${message.content}`);
-      } else {
-        // If content is something else, stringify it to display
-        console.log(`${message.role}: ${JSON.stringify(message.content, null, 2)}`);
-      }
-    });
-  }
+async function displayResponse(threadId, lastMessageTimestamp = 0) {
+  const messages = await openai.beta.threads.messages.list(threadId);
+  let latestTimestamp = lastMessageTimestamp;
 
-  async function handleConversation(assistantId, prompt) {
-        const thread = await createThread(); // Create a new thread at the start of the conversation
-        const threadId = thread.id; // Get the thread ID from the thread object
+  // Sort messages based on timestamp (converted to milliseconds)
+  const sortedMessages = messages.data.sort((a, b) => (a.created_at * 1000) - (b.created_at * 1000));
+
+  sortedMessages.forEach(message => {
+      // Convert message.created_at to milliseconds for comparison
+      const messageTimestamp = message.created_at * 1000;
+      if (messageTimestamp > lastMessageTimestamp) {
+          if (message.content && Array.isArray(message.content)) {
+              message.content.forEach(contentPart => {
+                  if (contentPart.type === 'text' && contentPart.text && contentPart.text.value) {
+                      console.log(`${message.role}: ${contentPart.text.value}`);
+                  }
+              });
+          } else if (typeof message.content === 'string') {
+              console.log(`${message.role}: ${message.content}`);
+          } else {
+              console.log(`${message.role}: ${JSON.stringify(message.content, null, 2)}`);
+          }
+          latestTimestamp = Math.max(latestTimestamp, messageTimestamp);
+      }
+  });
+
+  return latestTimestamp;
+}
+
+async function handleConversation(assistantId, prompt) {
+      const thread = await createThread();
+      const threadId = thread.id;
+      let lastMessageTimestamp = 0;
+
     
         // If a prompt is provided, send it as the initial message
         if (prompt) {
@@ -140,27 +151,28 @@ async function displayResponse(threadId) {
             await displayResponse(threadId);
         }
   
-    while (true) { // Start a loop to handle conversation
-      const userMessage = await askQuestion('You: '); // Ask user for input
-  
-      if (userMessage.toLowerCase() === 'exit') { // Implement a way to exit the conversation
-        console.log('Exiting conversation.');
-        break;
-      }
-  
-      await sendMessageToThread(threadId, userMessage); // Send the message to the thread
-      runId = await runAssistant(threadId, assistantId); // Process the message with a new run
-  
-      console.log('Waiting for assistant response...');
-      while (!(await isRunCompleted(threadId, runId))) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-  
-      await displayResponse(threadId); // Retrieve and display the assistant's response
+        var isTrue = true;
+        while (isTrue) {
+            const userMessage = await askQuestion('You: ');
+    
+            if (userMessage.toLowerCase() === 'exit') {
+                console.log('Exiting conversation.');
+                break;
+            }
+    
+            await sendMessageToThread(threadId, userMessage);
+            const runId = await runAssistant(threadId, assistantId);
+    
+            console.log('Waiting for assistant response...');
+            while (!(await isRunCompleted(threadId, runId))) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+    
+            lastMessageTimestamp = await displayResponse(threadId, lastMessageTimestamp);
+        }
+    
+        rl.close();
     }
-  
-    rl.close(); // Close the readline interface
-  }
 
   async function logError(error) {
     const errorLogPath = './Genie/errors.json';
@@ -188,7 +200,7 @@ async function displayResponse(threadId) {
   }
 
   async function start() {
-    uploadList = [];
+    let uploadList = [];
     // if ./Genie/code.json does not exist or is empty, create it with createJSONDocument()
     if (uploadCodebase) {
         const { shouldUpload, jsonFilePath } = createJSONDocument('..', 'codebase');
@@ -216,7 +228,7 @@ async function displayResponse(threadId) {
         // Ensure we have an assistant ID before proceeding
         if (assistantId) {
           console.log(`Starting conversation with assistant ID: ${assistantId}`);
-          await handleConversation(assistantId); // Start the conversation with the selected assistant
+          await handleConversation(assistantId, "Greet the user and remember, when the user asks for information about a file, always check in the code.json file to search for the file name first (that is where we keep our codebase files) Now greet the user and help them with their code please."); // Start the conversation with the selected assistant
         } else {
           console.error("Failed to create or find an assistant.");
           return; // Exit the function if no assistant could be created or found
@@ -245,7 +257,7 @@ async function displayResponse(threadId) {
             const response = await uploadFileIntoAssistant(path, assistantId);
             console.log("Code linked to assistant");
         } else if (process.argv.includes('error')){
-            path = './Genie/error.json';
+            const path = './Genie/error.json';
             const assistantId = await getActiveAssistant();
             const response = await uploadFileIntoAssistant(path, assistantId);
             console.log("Error handling linked to assistant");
@@ -258,7 +270,7 @@ async function displayResponse(threadId) {
       await deleteAllAssistants();
     } else if (process.argv.includes('list')){
         // List all assistants
-        response = await listAssistants();
+        const response = await listAssistants();
         console.log(response);
         }
         else if (process.argv.includes('help')){
@@ -276,6 +288,4 @@ async function displayResponse(threadId) {
    
   }
   
-  if (require.main === module) {
-    main(); // Only run main if this script is executed directly
-  }
+  main();

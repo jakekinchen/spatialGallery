@@ -1,13 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-const ignore = require('ignore');
+import fs from 'fs';
+import path from 'path';
+import ignore from 'ignore';
+import { docsBoxPath, docs_extensions, code_extensions, uploadCodebase } from './config.js';
+import process from 'process';
 
-const {
-  uploadCodebase,
-  code_extensions,
-  docs_extensions,
-  docsBoxPath,
-} = require('./config');
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const allowedExtensions = new Set([...code_extensions, ...docs_extensions]);
 
@@ -140,7 +140,7 @@ const createJSONDocument = (directoryPath, mode) => {
   return { shouldUpload, jsonFilePath };
 };
 
-module.exports = {
+export {
   createJSONDocument,
   updateStorageWithDocsBox,
 };

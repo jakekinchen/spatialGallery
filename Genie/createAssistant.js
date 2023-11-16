@@ -1,8 +1,8 @@
-const axios = require('axios');
-const ignore = require('ignore');
-const fs = require('fs-extra');
-const path = require('path');
-const {
+import axios from 'axios';
+import ignore from 'ignore';
+import fs from 'fs-extra';
+import path from 'path';
+import {
   listFiles,
   uploadFile,
   deleteFile,
@@ -12,13 +12,13 @@ const {
   createAssistantFile,
   listAssistantFiles,
   listAssistantDetails,
-} = require('./openaiMethods');
-const {
+} from './openaiMethods.js';
+import {
   assistantDescription,
   assistantInstructions,
   assistantName,
   code_extensions,
-} = require('./config');
+} from './config.js';
 
 // Load .gitignore rules
 const ig = ignore().add(fs.readFileSync('.gitignore').toString());
@@ -103,13 +103,12 @@ async function createAndUploadAssistant() {
             const response = uploadFileIntoAssistant('./Genie/code.json', assistantId);
             console.log(response);
         }
-        console.log(response);
         return assistantId;
 
   } catch (error) {
       console.error('Error in creating or uploading assistant:', error);
       // If there is an error, delete the assistant
-      await deleteAssistant(assistantId);
+      //await deleteAssistant(assistantId);
   }
 }
 
@@ -171,7 +170,11 @@ async function main() {
   }
 }
 
-module.exports = {
+export {
   createAndUploadAssistant,
   uploadFileIntoAssistant,
+  updateAssistantJSON,
+  commentFilePaths,
+  readFiles,
+  createAssistant
 }

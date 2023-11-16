@@ -1,13 +1,13 @@
+// ES Module syntax
+import OpenAI from 'openai';
+import dotenv from 'dotenv';
+import process from 'process';
+import path from 'path';
+import { promises as fsp } from 'fs';
+import fs from 'fs';
 
-const OpenAI = require('openai'); // Import the OpenAI API wrapper
-const dotenv = require('dotenv'); // Import dotenv to load environment variables
-const path = require('path'); // Import path to work with file paths
-
-dotenv.config({path: 'Genie/.env'}); // Load the environment variables from a .env file
-
-const openai = new OpenAI(process.env.OPENAI_API_KEY); // Initialize the OpenAI client with your API key
-const fsp = require('fs').promises; // Make sure to use the promises version for async/await
-const fs = require('fs'); // Import fs to work with the file system
+dotenv.config({path: 'Genie/.env'});
+const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 // Function to list files
 async function listFiles(purpose) {
@@ -24,7 +24,7 @@ async function listFiles(purpose) {
 async function uploadFile(filePath, purpose='assistants') {
   const content = fs.createReadStream(filePath);
   // Use the OpenAI API to upload the file
-  response = await openai.files.create({
+  const response = await openai.files.create({
     file: content,
     purpose: "assistants",
   });
@@ -179,7 +179,7 @@ async function createAssistantFile(assistantId, fileId) {
 
 // Function to get assistant id
 async function getActiveAssistant() {
-  response = await listAssistantDetails();
+  const response = await listAssistantDetails();
   if (!response) {
     console.log('No assistant details found.');
     return null;
@@ -234,7 +234,7 @@ async function listAssistantDetails() {
 }
 
   // Export all functions
-  module.exports =  {
+export {
     listFiles,
     uploadFile,
     deleteFile,

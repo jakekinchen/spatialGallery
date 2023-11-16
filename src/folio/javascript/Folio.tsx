@@ -283,9 +283,7 @@ const Folio = (props) => {
       title.current.position = Math.round(
         title.current.absolutePosition % title.current.width
       );
-      document.title = `${"_".repeat(
-        title.current.width - title.current.position
-      )}🚗${"_".repeat(title.current.position)}`;
+      document.title = `✨⚡️✨⚡️✨⚡️`;
     }, title.current.frequency);
   }, []);
   /*const setThreejsJourney = useCallback(() => {
