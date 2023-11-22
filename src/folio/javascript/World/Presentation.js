@@ -4,6 +4,8 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 import Button from './Button.js'
 import Resources from '../Resources.js';
+import Pedestal from '../Pedestal.js';
+import Board from '../Board.js';
 
 
 export default class Presentation {
@@ -108,6 +110,8 @@ addInteractivity() {
   this.renderer.domElement.addEventListener('mousemove', onMouseMove, true);
   this.renderer.domElement.addEventListener('mousedown', onMouseDown, false);
 }*/
+
+    setPed
 
 
     setHover(isHover) {
