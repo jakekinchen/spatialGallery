@@ -256,6 +256,7 @@ const Folio = (props) => {
       time: time.current,
       sizes: sizes.current,
       camera: camera.current,
+      scene: scene,
       renderer: renderer,
       passes: passes.current,
     }) as WorldType;

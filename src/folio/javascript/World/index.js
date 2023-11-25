@@ -35,6 +35,7 @@ export default class
         this.camera = _options.camera
         this.renderer = _options.renderer
         this.passes = _options.passes
+        this.scene = _options.scene
 
         // Debug
         if(this.debug)
@@ -514,6 +515,7 @@ export default class
         // Pedestal
         this.sections.start = new StartSection({
             ...options,
+            scene: this.scene,
             x: 10,
             y: 2
         })

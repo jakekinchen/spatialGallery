@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 export default class Pedestal
 {
@@ -13,6 +15,9 @@ export default class Pedestal
         this.walls = _options.walls
         this.tiles = _options.tiles
         this.debug = _options.debug
+        this.camera = _options.camera
+        this.scene = _options.scene
+        this.renderer = _options.renderer
         this.x = _options.x
         this.y = _options.y
 
@@ -77,19 +82,35 @@ addButtonFunctionality() {
     const fileInput = document.getElementById('threeFileInput');
     this.pedestal.button.on('interact', () => {
         console.log('Button interacted, opening file input.');
+        console.log( this.scene );
         fileInput.click();
+
     });
 
     fileInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
+        const scene = this.scene;
         console.log('File selected:', file);
 
         if (file) {
             const reader = new FileReader();
 
-            reader.onload = (e) => {
-                this.setBowlingBall();
-                
+            reader.onload = (e)=>{
+                const gltfLoader = new GLTFLoader();
+                const dracoLoader = new DRACOLoader();
+                dracoLoader.setDecoderPath('draco/')
+                dracoLoader.setDecoderConfig({ type: 'js' })
+                gltfLoader.setDRACOLoader( dracoLoader );
+
+                gltfLoader.parse( e.target.result, '', function ( gltf ) {
+                    gltf.scene.scale.set(3, 3, 3);
+                    gltf.scene.position.set(6, 5, 1);
+                    scene.add( gltf.scene );
+                    this.renderer.render( scene, this.camera );
+
+
+                } );
+
             };
 
             reader.onerror = (error) => {
@@ -97,7 +118,7 @@ addButtonFunctionality() {
             };
 
             reader.readAsArrayBuffer(file);
-            this.setBowlingBall();
+
         }
     });
 }
@@ -112,7 +133,7 @@ setFailedLogic(){
                 gltfLoader.parse(e.target.result, '', (gltf) => {
                     console.log('GLTF parsed:', gltf);
                     gltf.scene.scale.set(3, 3, 3);
-                    gltf.scene.position.set(this.x-6, this.y+5, 1);
+                    gltf.scene.position.set(6, 5, 1);
 
                     this.pedestal.add(gltf.scene); // Adding loaded scene to the pedestal
                     this.pedestal.placeholder = gltf.scene; // Updating placeholder

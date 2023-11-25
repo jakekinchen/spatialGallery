@@ -14,6 +14,9 @@ export default class StartSection
         this.walls = _options.walls
         this.tiles = _options.tiles
         this.debug = _options.debug
+        this.camera = _options.camera
+        this.renderer = _options.renderer
+        this.scene = _options.scene
         this.x = _options.x
         this.y = _options.y
 
@@ -23,7 +26,6 @@ export default class StartSection
             this.debugFolder = this.debug.addFolder('startSection')
             // this.debugFolder.open()
         }
-
         // Set up
         this.container = new THREE.Object3D()
         this.container.matrixAutoUpdate = false
@@ -34,6 +36,9 @@ export default class StartSection
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
 
         this.pedestal = new Pedestal({
+            camera: this.camera,
+            renderer: this.renderer,
+            scene: this.scene,
             time: this.time,
             resources: this.resources,
             objects: this.objects,
