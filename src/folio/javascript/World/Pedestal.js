@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js' 
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 
 export default class Pedestal
 {
@@ -32,20 +34,81 @@ export default class Pedestal
         this.container = new THREE.Object3D()
         this.container.matrixAutoUpdate = false
 
-        this.resources.items.areaResetTexture.magFilter = THREE.NearestFilter
-        this.resources.items.areaResetTexture.minFilter = THREE.LinearFilter
+        this.resources.items.areaResetTexture.magFilter = THREE.NearestFilter;
+        this.resources.items.areaResetTexture.minFilter = THREE.LinearFilter;
 
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
 
-        this.pedestal = new THREE.Scene();
+        //this.pedestal = new THREE.Scene();
         console.log('Pedestal scene created.');
 
         this.setStatic();
         this.setButton();
-        this.setPlaceholder();
+        //this.setPlaceholder();
         this.addButtonFunctionality();
+        this.setTest();
         //this.setObject();
        //this.setBowlingBall();
+    }
+
+    setTest(){
+        const buttonGeometry =  new RoundedBoxGeometry(2, 1, 0.1, 0.1, 0.1, 0.1, 0.05);
+
+        // Create button material
+        const buttonMaterial = new THREE.MeshBasicMaterial({
+            color: 0x0000ff,
+            transparent: false,
+            opacity: 0.5,
+            side: THREE.DoubleSide,
+        });
+
+        // Create button mesh
+        this.mesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+
+        // Add mesh to container
+        this.container.add(this.mesh);
+    }
+
+    setActivities()
+    {
+        // Set up
+        this.activities = {}
+        this.activities.x = 0
+        this.activities.y = 0 
+        this.activities.multiplier = 5.5
+
+        // Geometry
+        this.activities.geometry = new THREE.PlaneBufferGeometry(2 * this.activities.multiplier, 1 * this.activities.multiplier, 1, 1)
+
+        // Texture
+        this.activities.texture = this.resources.items.informationActivitiesTexture
+        this.activities.texture.magFilter = THREE.NearestFilter
+        this.activities.texture.minFilter = THREE.LinearFilter
+
+        // Material
+        this.activities.material = new THREE.MeshBasicMaterial({ wireframe: false, color: 0xffffff, alphaMap: this.activities.texture, transparent: false })
+
+        // Mesh
+        this.activities.mesh = new THREE.Mesh(this.activities.geometry, this.activities.material)
+        this.activities.mesh.position.x = this.activities.x
+        this.activities.mesh.position.y = this.activities.y
+        this.activities.mesh.matrixAutoUpdate = false
+        this.activities.mesh.updateMatrix()
+        this.container.add(this.activities.mesh)
+    }
+
+    setBoard(){
+        const planeGeometry = new RoundedBoxGeometry( 4.85, 2.8,1, 8, 1);
+        const planeMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+        this.planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
+        this.planeMesh.position.x = 0.0;
+        this.planeMesh.position.y = 0;
+        this.planeMesh.position.z = 2.1;
+        this.planeMesh.rotation.x = -4.7;
+        this.planeMesh.rotation.y = 0.1;
+        this.planeMesh.matrixAutoUpdate = false;
+        this.planeMesh.updateMatrix();
+        this.container.add(this.planeMesh);
     }
 
 setPlaceholder() {
@@ -58,7 +121,7 @@ setPlaceholder() {
 }
 
 setStatic() {
-    this.pedestal.mesh = this.objects.add({
+    this.pedestal = this.objects.add({
         base: this.resources.items.pedestalBase.scene,
         collision: this.resources.items.startStaticCollision.scene,
         floorShadowTexture: this.resources.items.startStaticFloorShadowTexture,
@@ -79,6 +142,7 @@ setButton() {
 }
 
 addButtonFunctionality() {
+
     const fileInput = document.getElementById('threeFileInput');
     this.pedestal.button.on('interact', () => {
         console.log('Button interacted, opening file input.');
@@ -89,39 +153,37 @@ addButtonFunctionality() {
 
     fileInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
-        const scene = this.scene;
-        console.log('File selected:', file);
-
         if (file) {
             const reader = new FileReader();
-
-            reader.onload = (e)=>{
-                const gltfLoader = new GLTFLoader();
+            reader.onload = (e) => {
                 const dracoLoader = new DRACOLoader();
-                dracoLoader.setDecoderPath('draco/')
-                dracoLoader.setDecoderConfig({ type: 'js' })
-                gltfLoader.setDRACOLoader( dracoLoader );
+                dracoLoader.setDecoderPath('draco/');
 
-                gltfLoader.parse( e.target.result, '', function ( gltf ) {
+                const gltfLoader = new GLTFLoader();
+                gltfLoader.setDRACOLoader(dracoLoader);
+
+                gltfLoader.parse(e.target.result, '', (gltf) => {
+                    console.log('Model loaded:', gltf);
                     gltf.scene.scale.set(3, 3, 3);
-                    gltf.scene.position.set(6, 5, 1);
-                    scene.add( gltf.scene );
-                    this.renderer.render( scene, this.camera );
+                    gltf.scene.position.set(this.x-6, this.y+5, 1);
+                    this.container.add(gltf.scene);
+                    const bboxHelper = new THREE.BoxHelper(gltf.scene, 0xff0000);
+                    this.container.add(bboxHelper);
 
-
-                } );
-
+                    // Trigger a render/update if necessary
+                    // yourRenderFunction(); // Uncomment or modify as needed
+                }, (error) => {
+                    console.error('Error parsing GLTF:', error);
+                });
             };
-
             reader.onerror = (error) => {
                 console.error('Error reading file:', error);
             };
-
             reader.readAsArrayBuffer(file);
-
         }
     });
 }
+
 
 setImportedObject(){
     

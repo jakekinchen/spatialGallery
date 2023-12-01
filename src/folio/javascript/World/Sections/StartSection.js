@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import Pedestal from '../Pedestal';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 
 export default class StartSection
 {
@@ -34,7 +35,31 @@ export default class StartSection
         this.resources.items.areaResetTexture.minFilter = THREE.LinearFilter
 
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
+        this.setPedestal()
+        this.setTest()
+        
+    }
 
+    setTest(){
+        const buttonGeometry =  new RoundedBoxGeometry(2, 1, 0.1, 0.1, 0.1, 0.1, 0.05);
+
+        // Create button material
+        const buttonMaterial = new THREE.MeshBasicMaterial({
+            color: 0x0000ff,
+            transparent: false,
+            opacity: 0.5,
+            side: THREE.DoubleSide,
+        });
+
+        // Create button mesh
+        this.mesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+
+        // Add mesh to container
+        this.container.add(this.mesh);
+    }
+
+
+    setPedestal(){
         this.pedestal = new Pedestal({
             camera: this.camera,
             renderer: this.renderer,
@@ -50,6 +75,8 @@ export default class StartSection
             y: this.y
         });
     }
+
+
 
 
 

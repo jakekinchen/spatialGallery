@@ -6,11 +6,15 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import path from 'path';
 import readline from 'readline';
-import { createAndUploadAssistant, uploadFileIntoAssistant } from './createAssistant.js';
+import { createAndUploadAssistant, uploadFileIntoAssistant, deleteAllFiles, deleteAllAssistantFiles, updateAssistantJSON } from './createAssistant.js';
 import { createJSONDocument } from './createFile.js';
 import { listFiles, listAssistantFiles, listAssistantDetails, uploadFile, deleteFile, deleteAssistantFile, retrieveFileInfo, retrieveFileContent, getActiveAssistant, deleteAllAssistants, listAssistants} from './openaiMethods.js';
 import { uploadCodebase } from './config.js';
 import process from 'process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configure dotenv to load environment variables from .env file
 dotenv.config({path: 'Genie/.env'});
@@ -27,6 +31,13 @@ const rl = readline.createInterface({
 function askQuestion(query) {
     return new Promise(resolve => rl.question(query, resolve));
   }
+
+async function deleteAssistantFiles(){
+    const assistants = await listAssistants();
+    for (const assistant of assistants) {
+        await deleteAllAssistantFiles(assistant.id);
+      }
+}
 
 
 // Function to create a thread
@@ -199,9 +210,29 @@ async function handleConversation(assistantId, prompt) {
     }
   }
 
+  async function ifDocsBoxEmptyDeleteAllAssistantFiles(){
+    const docsBoxPath = './Genie/docsBox';
+    const files = await fsPromises.readdir(docsBoxPath);
+    if (files.length === 0) {
+      console.log("DocsBox is empty, deleting all assistant files.");
+      await deleteAssistantCodebaseFile();
+    }
+  }
+
+  async function deleteAssistantCodebaseFile(){
+    const assistants = await listAssistants();
+    for (const assistant of assistants) {
+        const files = await listAssistantFiles(assistant.id);
+        for (const file of files) {
+              await deleteAssistantFile(assistant.id, file.id);
+            
+        }
+    }
+  }
+
   async function start() {
     let uploadList = [];
-    // if ./Genie/code.json does not exist or is empty, create it with createJSONDocument()
+    // if ./Genie/cachedFiles/codebase.json does not exist or is empty, create it with createJSONDocument()
     if (uploadCodebase) {
         const { shouldUpload, jsonFilePath } = createJSONDocument('..', 'codebase');
         if (shouldUpload) {
@@ -228,7 +259,7 @@ async function handleConversation(assistantId, prompt) {
         // Ensure we have an assistant ID before proceeding
         if (assistantId) {
           console.log(`Starting conversation with assistant ID: ${assistantId}`);
-          await handleConversation(assistantId, "Greet the user and remember, when the user asks for information about a file, always check in the code.json file to search for the file name first (that is where we keep our codebase files) Now greet the user and help them with their code please."); // Start the conversation with the selected assistant
+          await handleConversation(assistantId, "Greet the user and remember, when the user asks for information about a file, always check in the codebase.json file to search for the file name first (that is where we keep our codebase files) Now greet the user and help them with their code please."); // Start the conversation with the selected assistant
         } else {
           console.error("Failed to create or find an assistant.");
           return; // Exit the function if no assistant could be created or found
@@ -248,15 +279,26 @@ async function handleConversation(assistantId, prompt) {
       // Create new file
       createJSONDocument();
       // Upload new file
-      await uploadFileIntoAssistant('./Genie/code.json', assistantId);
+      await uploadFileIntoAssistant('./Genie/cachedFiles/codebase.json', assistantId);
       
     } else if (process.argv.includes('link')){
-        if (process.argv.includes('code')){
-            const path = './Genie/code.json';
-            const assistantId = await getActiveAssistant();
-            const response = await uploadFileIntoAssistant(path, assistantId);
-            console.log("Code linked to assistant");
-        } else if (process.argv.includes('error')){
+      if (process.argv.includes('code')) {
+        await ifDocsBoxEmptyDeleteAllAssistantFiles();
+        const jsonFilePath = path.join(__dirname, 'cachedFiles', 'codebase.json');
+
+        const { shouldUpload, jsonFilePath: newJsonFilePath } = createJSONDocument('./', 'code'); // replace with actual directory path and mode
+    
+        // Assuming the file is now ready, upload it
+        if (shouldUpload) {
+        const assistantId = await getActiveAssistant();
+        const response = await uploadFileIntoAssistant(newJsonFilePath, assistantId);
+        // Update the assistant files in data.json with the response
+        updateAssistantJSON(assistantId);
+
+        console.log("Code linked to assistant");
+        }
+        
+    } else if (process.argv.includes('error')){
             const path = './Genie/error.json';
             const assistantId = await getActiveAssistant();
             const response = await uploadFileIntoAssistant(path, assistantId);

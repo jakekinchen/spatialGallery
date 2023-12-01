@@ -61,13 +61,14 @@ async function commentFilePaths(dirPath = '/../') {
 }
 
 async function updateAssistantJSON(assistantId) {
+  const filePath = './Genie/data.json';
   // If it doesn't exist, create a new assistant object with the given ID in ./data.json
-  if (!fs.existsSync('./data.json')) {
+  if (!fs.existsSync(filePath)) {
     // Create a new data.json file
-    fs.writeFileSync('./data.json', JSON.stringify({ assistants: {} }));
+    fs.writeFileSync(filePath, JSON.stringify({ assistants: {} }));
   }
   // Read the data.json file
-  const data = JSON.parse(fs.readFileSync('./data.json'));
+  const data = JSON.parse(fs.readFileSync(filePath));
   // If the assistant ID is not present in the data.json file, add it
   if (!data.assistants[assistantId]) {
     data.assistants[assistantId] = {};
@@ -79,12 +80,13 @@ async function updateAssistantJSON(assistantId) {
   const assistantFiles = await listAssistantFiles(assistantId);
   data.assistants[assistantId].files = assistantFiles;
   // Write the updated data.json file
-  fs.writeFileSync('./data.json', JSON.stringify(data));
+  fs.writeFileSync(filePath, JSON.stringify(data));
 }
 
 
 // Main function to create an assistant and upload a file
 async function createAndUploadAssistant() {
+  const codebasePath = './Genie/cachedFiles/codebase.json';
   try {
       // Create the assistant
       const assistant = await createAssistant(
@@ -98,9 +100,9 @@ async function createAndUploadAssistant() {
       );
 
       const assistantId = assistant.id;
-        // if code.json exists in ./Genie, and it is not empty, upload it
-        if (fs.existsSync('./Genie/code.json') && fs.statSync('./Genie/code.json').size > 0) {
-            const response = uploadFileIntoAssistant('./Genie/code.json', assistantId);
+        // if codebase.json exists in ./Genie, and it is not empty, upload it
+        if (fs.existsSync(codebasePath) && fs.statSync(codebasePath).size > 0) {
+            const response = uploadFileIntoAssistant(codebasePath, assistantId);
             console.log(response);
         }
         return assistantId;
@@ -145,12 +147,24 @@ async function uploadFileIntoAssistant(filePath, assistantId) {
   return fileId;
 }
 
-async function delete_all_files() {
+async function deleteAllAssistantFiles(assistantId) {
+  try {
+    const assistantFiles = await listAssistantFiles(assistantId);
+    console.log('Assistant files listed:', assistantFiles);
+    for (const assistantFile of assistantFiles) {
+      console.log(await deleteFile(assistantFile.id));
+    }
+  } catch (error) {
+    console.error('Error in deleting assistant files:', error);
+  }
+}
+
+async function deleteAllFiles() {
   try {
     const files = await listFiles();
     console.log('Files listed:', files);
     for (const file of files) {
-      await deleteFile(file.id);
+      console.log(await deleteFile(file.id));
     }
   } catch (error) {
     console.error('Error in deleting files:', error);
@@ -161,7 +175,7 @@ async function delete_all_files() {
 async function main() {
   try {
     //console.log(await listFiles());
-   //await delete_all_files();
+   //await deleteAllFiles();
 
     
   } catch (error) {
@@ -176,5 +190,7 @@ export {
   updateAssistantJSON,
   commentFilePaths,
   readFiles,
-  createAssistant
+  createAssistant,
+  deleteAllFiles,
+  deleteAllAssistantFiles,
 }

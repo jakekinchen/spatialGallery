@@ -23,10 +23,17 @@ async function listFiles(purpose) {
 // Function to upload a single file to OpenAI and return the file ID
 async function uploadFile(filePath, purpose='assistants') {
   const content = fs.createReadStream(filePath);
+  const supportedFormats = ['c', 'cpp', 'csv', 'docx', 'html', 'java', 'json', 'md', 'pdf', 'php', 'pptx', 'py', 'rb', 'tex', 'txt', 'css', 'jpeg', 'jpg', 'js', 'gif', 'png', 'tar', 'ts', 'xlsx', 'xml', 'zip'];
+  // Make sure the file extension is supported
+  const fileExtension = path.extname(filePath).slice(1);
+  if (!supportedFormats.includes(fileExtension)) {
+    console.error(`File extension ${fileExtension} is not supported. Please use one of the following formats: ${supportedFormats.join(', ')}`);
+    return;
+  }
   // Use the OpenAI API to upload the file
   const response = await openai.files.create({
     file: content,
-    purpose: "assistants",
+    purpose: purpose,
   });
   // Example response format
   return response; // Replace with actual response from OpenAI
@@ -36,7 +43,7 @@ async function uploadFile(filePath, purpose='assistants') {
 async function deleteFile(fileId) {
   try {
     const response = await openai.files.del(fileId);
-    //console.log("File deleted:", response.data);
+    console.log("File deleted:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error deleting file:", error);

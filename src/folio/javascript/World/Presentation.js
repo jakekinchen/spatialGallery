@@ -111,7 +111,6 @@ addInteractivity() {
   this.renderer.domElement.addEventListener('mousedown', onMouseDown, false);
 }*/
 
-    setPed
 
 
     setHover(isHover) {

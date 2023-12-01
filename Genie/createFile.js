@@ -16,11 +16,19 @@ const ig = ignore().add(fs.readFileSync('.gitignore', 'utf8'));
 
 // Check if the file should be ignored based on .gitignore and other criteria
 const shouldIgnoreFile = (file) => {
+  // Make sure the path is relative to the current working directory
   const relativePath = path.relative(process.cwd(), file);
+
+  // Check if the relative path is valid
+  if (!relativePath || relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+    return true; // Ignore files outside the current working directory
+  }
+
   // Ignore files inside .git directory or the Genie directory
   if (relativePath.startsWith('.git') || relativePath.startsWith('Genie')) {
     return true;
   }
+
   // Use ignore to check against .gitignore rules
   return ig.ignores(relativePath);
 };
@@ -43,10 +51,10 @@ const walkSync = (dir, filelist = []) => {
     if (!shouldIgnoreFile(dirFile)) {
       const stat = fs.statSync(dirFile);
       if (stat.isDirectory()) {
-        filelist.push({ path: dirFile, type: 'directory', contents: [] });
-        walkSync(dirFile, filelist[filelist.length - 1].contents);
+        const nestedFiles = walkSync(dirFile); // Recursively get files from the directory
+        nestedFiles.forEach(nestedFile => filelist.push(nestedFile)); // Add them to the main file list
       } else {
-        filelist.push({ path: dirFile, type: 'file', content: readFileContents(dirFile) });
+        filelist.push({ path: dirFile, type: 'file', content: readFileContents(dirFile, allowedExtensions) });
       }
     }
   });
@@ -89,26 +97,27 @@ const updateStorageWithDocsBox = () => {
   updateJSONStorage(fileTree);
 };
 
-// Write JSONL to a file
+// Write JSON to a file
 const writeJSON = (data, filePath) => {
-  // Convert the entire data array into a JSON string
-  const jsonString = JSON.stringify(data); // The '2' argument here adds indentation for readability
-  fs.writeFileSync(filePath, jsonString);
+  const formattedJSON = JSON.stringify(data, null, 2); // Indent with 2 spaces for readability
+  fs.writeFileSync(filePath, formattedJSON, 'utf8');
 };
 
 const createJSONDocument = (directoryPath, mode) => {
   // Set allowed extensions based on mode
+  //console.log("Directory path: ", directoryPath)
   const allowedExtensions = new Set(
     mode === 'docs' ? [...code_extensions, ...docs_extensions] : code_extensions
   );
 
   const rootDirectory = mode === 'docs' ? docsBoxPath : path.join(__dirname, '..');
   const allFiles = walkSync(path.join(rootDirectory, directoryPath));
-
+  //console.log("Path: ", path.join(rootDirectory, directoryPath))
   // Create JSON entry only for files with allowed extensions
   const jsonData = allFiles.map(file => {
     if (file.type === 'file' && allowedExtensions.has(path.extname(file.path))) {
       return {
+        name: path.basename(file.path),
         file_path: path.relative(rootDirectory, file.path),
         content: readFileContents(file.path, allowedExtensions),
       };
@@ -117,7 +126,7 @@ const createJSONDocument = (directoryPath, mode) => {
   }).filter(entry => entry !== null);
 
   // Define cachedFiles directory within the Genie folder
-  const cachedFilesPath = path.join(__dirname, 'Genie', 'cachedFiles');
+  const cachedFilesPath = path.join(__dirname, 'cachedFiles');
 
   // Ensure that the cachedFiles directory exists
   if (!fs.existsSync(cachedFilesPath)) {
