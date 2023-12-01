@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js' 
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 
