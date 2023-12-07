@@ -516,6 +516,7 @@ export default class
         this.sections.start = new StartSection({
             ...options,
             scene: this.scene,
+            renderer: this.renderer,
             x: 10,
             y: 2
         })

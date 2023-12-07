@@ -41,7 +41,8 @@ export default class Pedestal
 
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
 
-        //this.pedestal = new THREE.Scene();
+        this.pedestal = new THREE.Scene();
+        console.log('Pedestal scene created.');
 
         this.setStatic();
         this.setButton();
@@ -151,6 +152,39 @@ export default class Pedestal
         this.container.add(this.planeMesh);
     }
 
+    setAddMediaLabel() {
+        // Set up
+        this.addMediaLabel = {}
+    
+        const loader = new FontLoader();
+    
+        loader.load('fonts/comic_neue.json', (font) => {
+            const geometry = new TextGeometry('Add Media', {
+                font: font,
+                size: 100, // adjust size
+                height: 1, // adjust depth
+            });
+    
+            this.addMediaLabel.material = new THREE.MeshBasicMaterial({ 
+                transparent: false, 
+                depthWrite: false, 
+                // make the color light blue
+                color: 0xB0C4DE
+            });
+            this.addMediaLabel.material.opacity = 1;
+    
+            this.addMediaLabel.mesh = new THREE.Mesh(
+                geometry, 
+                this.addMediaLabel.material
+            );
+            this.addMediaLabel.mesh.position.set(this.x-10, this.y, 2);
+            this.addMediaLabel.mesh.matrixAutoUpdate = false;
+            this.addMediaLabel.mesh.updateMatrix();
+            console.log('Position of addMediaLabel:', this.addMediaLabel.mesh.position)
+    
+            this.container.add(this.addMediaLabel.mesh);
+        });
+    }
 setPlaceholder() {
     // Add a null object to the scene as a child of this.pedestal, it should be 3x3x3
     this.placeholder = new THREE.Object3D();
@@ -186,34 +220,42 @@ addButtonFunctionality() {
     const fileInput = document.getElementById('threeFileInput');
     this.pedestal.button.on('interact', () => {
         console.log('Button interacted, opening file input.');
-        console.log( this.scene );
+
         fileInput.click();
 
     });
 
     fileInput.addEventListener('change', (event) => {
+        const scene = this.scene;
+        console.log('Scene selected: ', scene );
+        const camera = this.camera;
+
+        console.log('Camera selected: ', camera );
+        const renderer = this.renderer;
+
+        console.log('Renderer selected: ', renderer );
         const file = event.target.files[0];
+        console.log('File selected:', file);
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const dracoLoader = new DRACOLoader();
-                dracoLoader.setDecoderPath('draco/');
-
                 const gltfLoader = new GLTFLoader();
-                gltfLoader.setDRACOLoader(dracoLoader);
+                const dracoLoader = new DRACOLoader();
+                dracoLoader.setDecoderPath('draco/')
+                dracoLoader.setDecoderConfig({ type: 'js' })
+                gltfLoader.setDRACOLoader( dracoLoader );
 
                 gltfLoader.parse(e.target.result, '', (gltf) => {
-                    console.log('Model loaded:', gltf);
-                    gltf.scene.scale.set(3, 3, 3);
-                    gltf.scene.position.set(this.x, this.y, 1);
-                    this.container.add(gltf.scene);
+
+                    gltf.scene.scale.set(1, 1, 1);
+                    gltf.scene.position.set(6, 5, 1);
+                    scene.add( gltf.scene );
+                    this.renderer.render( scene, this.camera );
                     const bboxHelper = new THREE.BoxHelper(gltf.scene, 0xff0000);
                     this.container.add(bboxHelper);
 
                     // Trigger a render/update if necessary
                     // yourRenderFunction(); // Uncomment or modify as needed
-                }, (error) => {
-                    console.error('Error parsing GLTF:', error);
                 });
             };
             reader.onerror = (error) => {
@@ -223,7 +265,6 @@ addButtonFunctionality() {
         }
     });
 }
-
 
 setImportedObject(){
     
