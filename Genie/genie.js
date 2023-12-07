@@ -1,21 +1,44 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const fsPromises = require('fs').promises; // Make sure to use the promises version for async/await
-const OpenAI = require('openai'); // Import the OpenAI API wrapper
-const dotenv = require('dotenv'); // Import dotenv to load environment variables
-const path = require('path'); // Import path to work with file paths
+// Import required modules
+import fs from 'fs';
+import fsp from 'fs/promises';
+import fsPromises from 'fs/promises';
+import OpenAI from 'openai';
+import dotenv from 'dotenv';
+import path from 'path';
+import readline from 'readline';
+import { createAndUploadAssistant, uploadFileIntoAssistant, deleteAllFiles, deleteAllAssistantFiles, updateAssistantJSON, createAssistantFiles } from './createAssistant.js';
+import { createJSONDocument, updateStorageWithDocsBox } from './createFile.js';
+import { listFiles, listAssistantFiles, listAssistantDetails, uploadFile, deleteFile, deleteAssistantFile, retrieveFileInfo, retrieveFileContent, getActiveAssistant, deleteAllAssistants, listAssistants} from './openaiMethods.js';
+import { uploadCodebase, docsBoxPath } from './config.js';
+import process from 'process';
+import { fileURLToPath } from 'url';
 
-const { createAndUploadAssistant, uploadFileIntoAssistant } = require('./createAssistant');
-const { createJSONDocument } = require('./createFile');
-const { listFiles, listAssistantFiles, listAssistantDetails, uploadFile, deleteFile, deleteAssistantFile, retrieveFileInfo, retrieveFileContent, getActiveAssistant, deleteAllAssistants, listAssistants} = require('./openaiMethods');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 dotenv.config({path: 'Genie/.env'}); // Load the environment variables from a .env file
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-const readline = require('readline');
-const { create } = require('domain');
-const { uploadCodebase } = require('./config');
+const filePath = './Genie/cachedFiles/data.json';
+
+async function readJSON() {
+  if (fs.existsSync(filePath)) {
+    const rawData = fs.readFileSync(filePath);
+    return JSON.parse(rawData);
+  }
+  return null;
+}
+
+async function writeJSON(data) {
+  const formattedJSON = JSON.stringify(data, null, 2); // Indent with 2 spaces for readability
+  fs.writeFileSync(filePath, formattedJSON, 'utf8');
+  return formattedJSON.length;
+}
+
+
 
 // Create readline interface for CLI interaction
 const rl = readline.createInterface({
@@ -28,6 +51,45 @@ function askQuestion(query) {
     return new Promise(resolve => rl.question(query, resolve));
   }
 
+async function deleteAssistantFiles(){
+    const assistants = await listAssistants();
+    for (const assistant of assistants) {
+        await deleteAllAssistantFiles(assistant.id);
+      }
+}
+
+async function uploadNewFiles(assistantId){
+  await updateStorageWithDocsBox();
+  console.log("Uploading new files in docsBox");
+
+}
+
+async function uploadFilesfromCache(assistantId){
+  let JSONStorage = { assistants: [], files: [] };
+  try {
+    JSONStorage = JSON.parse(await fsp.readFile(filePath, 'utf8'));
+  } catch (error) {
+    console.error("Error reading JSON storage:", error);
+    return;
+  }
+
+  for (const file of JSONStorage.files) {
+    if (!file.uploaded) {
+      // Resolve to absolute path
+      const absoluteFilePath = path.resolve(docsBoxPath, file.path);
+
+      const response = await uploadFileIntoAssistant(absoluteFilePath, assistantId);
+      if (response) {
+        console.log(response);
+        file.uploaded = true;
+        file.fileId = response.id;
+        await writeJSON(JSONStorage);
+      } else {
+        console.error(`Failed to upload file: ${absoluteFilePath}`);
+      }
+    }
+  }
+}
 
 // Function to create a thread
 async function createThread() {
@@ -87,7 +149,7 @@ async function runAssistant(threadId, assistantId) {
     if (!assistantId) {
         throw new Error('Invalid assistant ID provided to runAssistant function.');
       }
-  run = await openai.beta.threads.runs.create(threadId, {
+  const run = await openai.beta.threads.runs.create(threadId, {
     assistant_id: assistantId
   });
     return run.id;
@@ -139,8 +201,9 @@ async function displayResponse(threadId) {
             // Retrieve and display the assistant's welcome message
             await displayResponse(threadId);
         }
+    let isRunning = true;
   
-    while (true) { // Start a loop to handle conversation
+    while (isRunning) { // Start a loop to handle conversation
       const userMessage = await askQuestion('You: '); // Ask user for input
   
       if (userMessage.toLowerCase() === 'exit') { // Implement a way to exit the conversation
@@ -149,7 +212,7 @@ async function displayResponse(threadId) {
       }
   
       await sendMessageToThread(threadId, userMessage); // Send the message to the thread
-      runId = await runAssistant(threadId, assistantId); // Process the message with a new run
+      const runId = await runAssistant(threadId, assistantId); // Process the message with a new run
   
       console.log('Waiting for assistant response...');
       while (!(await isRunCompleted(threadId, runId))) {
@@ -188,10 +251,11 @@ async function displayResponse(threadId) {
   }
 
   async function start() {
-    uploadList = [];
-    // if ./Genie/code.json does not exist or is empty, create it with createJSONDocument()
+    
+    let uploadList = [];
+    // if ./Genie/cachedFiles/codebase.json does not exist or is empty, create it with createJSONDocument()
     if (uploadCodebase) {
-        const { shouldUpload, jsonFilePath } = createJSONDocument('..', 'codebase');
+        const { shouldUpload, jsonFilePath } = await createJSONDocument('..', 'codebase');
         if (shouldUpload) {
           uploadList.push(jsonFilePath);
         }
@@ -199,12 +263,20 @@ async function displayResponse(threadId) {
   
 
     if (process.argv.includes('start')) {
+        // Check if ./Genie/docsBox exists
+        if (!fs.existsSync('./Genie/docsBox')) {
+          console.log('DocsBox does not exist. Creating it now.');
+          fs.mkdirSync('./Genie/docsBox');
+        }
+        // Update JSON storage with docsBox contents
+        //await updateStorageWithDocsBox();
+
+
         const assistants = await listAssistants();
         let assistantId = null;
     
         // If no assistants are found, create a new one
         if (assistants == "undefined" || assistants == null || assistants == "" || assistants == []) {
-          console.log("No assistant found, creating and uploading a new one.");
           assistantId = await createAndUploadAssistant(); // Create and upload if no assistant exists
         } else {
           // Otherwise, use the first assistant in the list
@@ -212,16 +284,17 @@ async function displayResponse(threadId) {
           //console.log("assistants: "+assistants);
           assistantId = assistants[0].id;
         }
-    
+        
         // Ensure we have an assistant ID before proceeding
         if (assistantId) {
+          await createAssistantFiles(assistantId);
           console.log(`Starting conversation with assistant ID: ${assistantId}`);
           await handleConversation(assistantId); // Start the conversation with the selected assistant
         } else {
           console.error("Failed to create or find an assistant.");
           return; // Exit the function if no assistant could be created or found
-        }
-      } else if (process.argv.includes('create')) {
+        }  }
+       else if (process.argv.includes('create')) {
       await deleteAllAssistants(); // Delete any old assistants
       await createAndUploadAssistant(); // Create and upload a new assistant
       // Additional code for 'update', 'link', 'unlink', 'delete' goes here
@@ -234,18 +307,28 @@ async function displayResponse(threadId) {
         await deleteAssistantFile(assistantId, file.id);
       }
       // Create new file
-      createJSONDocument();
+      await createJSONDocument();
       // Upload new file
       await uploadFileIntoAssistant('./Genie/code.json', assistantId);
       
     } else if (process.argv.includes('link')){
-        if (process.argv.includes('code')){
-            const path = './Genie/code.json';
-            const assistantId = await getActiveAssistant();
-            const response = await uploadFileIntoAssistant(path, assistantId);
-            console.log("Code linked to assistant");
-        } else if (process.argv.includes('error')){
-            path = './Genie/error.json';
+      if (process.argv.includes('code')) {
+        const jsonFilePath = path.join(__dirname, 'cachedFiles', 'codebase.json');
+
+        const { shouldUpload, jsonFilePath: newJsonFilePath } = await createJSONDocument('./', 'code'); // replace with actual directory path and mode
+    
+        // Assuming the file is now ready, upload it
+        if (shouldUpload) {
+        const assistantId = await getActiveAssistant();
+        const response = await uploadFileIntoAssistant(newJsonFilePath, assistantId);
+        // Update the assistant files in data.json with the response
+        updateAssistantJSON(assistantId);
+
+        console.log("Code linked to assistant");
+        }
+        
+    } else if (process.argv.includes('error')){
+            const path = './Genie/error.json';
             const assistantId = await getActiveAssistant();
             const response = await uploadFileIntoAssistant(path, assistantId);
             console.log("Error handling linked to assistant");
@@ -255,10 +338,13 @@ async function displayResponse(threadId) {
       // Code to unlink error handling from the assistant goes here
     } else if (process.argv.includes('delete')){
       // Delete all assistants
+      await deleteAllFiles();
+      await deleteAssistantFiles();
       await deleteAllAssistants();
+      
     } else if (process.argv.includes('list')){
         // List all assistants
-        response = await listAssistants();
+        const response = await listAssistants();
         console.log(response);
         }
         else if (process.argv.includes('help')){
@@ -276,6 +362,4 @@ async function displayResponse(threadId) {
    
   }
   
-  if (require.main === module) {
-    main(); // Only run main if this script is executed directly
-  }
+  main(); // Call the main function to start the application
