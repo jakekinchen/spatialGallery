@@ -34,7 +34,8 @@
     "radix": "^0.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.0.0",
-    "three": "^0.139.2"
+    "three": "^0.139.2",
+    "three-rounded-box": "^0.1.1"
   },
   "devDependencies": {
     "@types/dat.gui": "^0.7.7",
