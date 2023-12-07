@@ -29,6 +29,8 @@ export default class Controls extends EventEmitter
         this.actions.left = false
         this.actions.brake = false
         this.actions.boost = false
+        //this.camera.pan.value.y = false
+        //this.camera.pan.value.x = false
 
         document.addEventListener('visibilitychange', () =>
         {
@@ -40,6 +42,8 @@ export default class Controls extends EventEmitter
                 this.actions.left = false
                 this.actions.brake = false
                 this.actions.boost = false
+                //this.camera.pan.value.y = false
+                //this.camera.pan.value.x = false
             }
         })
     }
@@ -48,43 +52,51 @@ export default class Controls extends EventEmitter
     {
         this.keyboard = {}
         this.keyboard.events = {}
+        const panSpeed = 1
+
+        const moveCamera = (x, y) => {
+            this.camera.pan.value.x += x;
+            this.camera.pan.value.y += y;
+        };
 
         this.keyboard.events.keyDown = (_event) =>
         {
+            //this.pan.active = true
+            //this.pan.needsUpdate = true
             switch(_event.key)
             {
                 case 'ArrowUp':
-                case 'z':
+                //case 'z':
                 case 'w':
-                    this.camera.pan.reset()
-                    this.actions.up = true
+                    //this.camera.pan.reset()
+                    moveCamera(0, panSpeed);
                     break
 
                 case 'ArrowRight':
                 case 'd':
-                    this.actions.right = true
+                    moveCamera(panSpeed, 0);
                     break
 
                 case 'ArrowDown':
                 case 's':
-                    this.camera.pan.reset()
-                    this.actions.down = true
+                    //this.camera.pan.reset()
+                    moveCamera(0, -panSpeed);
                     break
 
                 case 'ArrowLeft':
-                case 'q':
+                //case 'q':
                 case 'a':
-                    this.actions.left = true
+                    moveCamera(-panSpeed, 0);
                     break
 
-                case 'Control':
-                case ' ':
-                    this.actions.brake = true
-                    break
+                //case 'Control':
+                //case ' ':
+                //    this.actions.brake = true
+                //    break
 
-                case 'Shift':
-                    this.actions.boost = true
-                    break
+                //case 'Shift':
+                //    this.actions.boost = true
+                //    break
 
                 // case ' ':
                 //     this.jump(true)
@@ -97,45 +109,45 @@ export default class Controls extends EventEmitter
             switch(_event.key)
             {
                 case 'ArrowUp':
-                case 'z':
+                //case 'z':
                 case 'w':
-                    this.actions.up = false
+                    moveCamera(0, 0);
                     break
 
                 case 'ArrowRight':
                 case 'd':
-                    this.actions.right = false
+                    moveCamera(0, 0);
                     break
 
                 case 'ArrowDown':
                 case 's':
-                    this.actions.down = false
+                    moveCamera(0, 0);
                     break
 
                 case 'ArrowLeft':
-                case 'q':
+                //case 'q':
                 case 'a':
-                    this.actions.left = false
+                    moveCamera(0, 0);
                     break
 
-                case 'Control':
-                case ' ':
-                    this.actions.brake = false
-                    break
+                //case 'Control':
+                //case ' ':
+                //    this.actions.brake = false
+                //    break
 
-                case 'Shift':
-                    this.actions.boost = false
-                    break
+                //case 'Shift':
+                //    this.actions.boost = false
+                //    break
 
-                case 'r':
-                    this.trigger('action', ['reset'])
-                    break
+                //case 'r':
+                //    this.trigger('action', ['reset'])
+                //    break
             }
         }
 
         document.addEventListener('keydown', this.keyboard.events.keyDown)
         document.addEventListener('keyup', this.keyboard.events.keyUp)
-    }
+    } 
 
     setTouch()
     {

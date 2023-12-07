@@ -66,6 +66,19 @@ export default class Camera
             this.debugFolder.add(this.angle.value, 'y').step(0.001).min(- 2).max(2).name('invertDirectionY').listen()
             this.debugFolder.add(this.angle.value, 'z').step(0.001).min(- 2).max(2).name('invertDirectionZ').listen()
         }
+        
+        const onRightClick = (event) => {
+            event.preventDefault();
+    
+            // Check if _name exists based on the event or use a default value
+            const _name = event.target.id === 'someElementID' ? 'projects' : 'default'; // Modify this logic based on your actual use case
+    
+            // Change the angle based on _name
+            this.angle.set(_name);
+        };
+    
+        // Event listener for right-click
+        window.addEventListener('contextmenu', onRightClick, false);
     }
 
     setInstance()
@@ -88,7 +101,7 @@ export default class Camera
         this.time.on('tick', () =>
         {
             if(!this.orbitControls.enabled)
-            {
+            { 
                 this.targetEased.x += (this.target.x - this.targetEased.x) * this.easing
                 this.targetEased.y += (this.target.y - this.targetEased.y) * this.easing
                 this.targetEased.z += (this.target.z - this.targetEased.z) * this.easing
@@ -185,11 +198,11 @@ export default class Camera
         )
         this.container.add(this.pan.hitMesh)
 
-        this.pan.reset = () =>
+        /*this.pan.reset = () =>
         {
             this.pan.targetValue.x = 0
             this.pan.targetValue.y = 0
-        }
+        }*/
 
         this.pan.enable = () =>
         {
@@ -301,6 +314,48 @@ export default class Camera
             this.pan.up()
         })
 
+        /*// Keyboard
+        const handleArrowKeyPress = (event) => {
+            const panSpeed = 1; // Adjust the panning speed as needed
+            const moveCamera = (x, y) => {
+                this.camera.pan.value.x += x;
+                this.camera.pan.value.y += y;
+            };
+            switch (event.key) {
+                case 'ArrowUp':
+                    moveCamera(0, panSpeed);
+                    break;
+                case 'ArrowDown':
+                    moveCamera(0, -panSpeed);
+                    break;
+                case 'ArrowLeft':
+                    moveCamera(-panSpeed, 0);
+                    break;
+                case 'ArrowRight':
+                    moveCamera(panSpeed, 0);
+                    break;
+                default:
+                    break;
+            }
+        };
+    
+        // Event listener for keydown events
+        window.addEventListener('keydown', handleArrowKeyPress);
+        window.addEventListener('keydown', (_event) =>
+        {
+            this.pan.down(_event.clientX, _event.clientY)
+        })
+
+        window.addEventListener('mousemove', (_event) =>
+        {
+            this.pan.move(_event.clientX, _event.clientY)
+        })
+
+        window.addEventListener('mouseup', () =>
+        {
+            this.pan.up()
+        }) */
+
         // Time tick event
         this.time.on('tick', () =>
         {
@@ -334,7 +389,10 @@ export default class Camera
         this.orbitControls = new OrbitControls(this.instance, this.renderer.domElement)
         this.orbitControls.enabled = false
         this.orbitControls.enableKeys = false
-        this.orbitControls.zoomSpeed = 0.5
+        this.orbitControls.zoomSpeed = 1
+        //this.orbitControls.object.position.x = 0
+        //this.orbitControls.object.position.y = 0
+        this.orbitControls.object.position.z = 0
 
         // Debug
         if(this.debug)
