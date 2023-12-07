@@ -3,7 +3,7 @@ import * as THREE from "three";
 
 import Camera from "./Camera";
 import Resources from "./Resources.js";
-import ThreejsJourney from "./ThreejsJourney.js";
+//import ThreejsJourney from "./ThreejsJourney.js";
 import Sizes from "./Utils/Sizes.js";
 import Time from "./Utils/Time.js";
 import World from "./World/index.js";
@@ -287,13 +287,14 @@ const Folio = (props) => {
       document.title = `✨⚡️✨⚡️✨⚡️`;
     }, title.current.frequency);
   }, []);
-  /*const setThreejsJourney = useCallback(() => {
-    threejsJourney.current = new ThreejsJourney({
-      config: config.current,
-      time: time.current,
-      world: world.current,
-    });
-  }, []);*/
+  // const setThreejsJourney = useCallback(() => {
+  //   threejsJourney.current = new ThreejsJourney({
+  //     config: config.current,
+  //     time: time.current,
+  //     world: world.current,
+  //   });
+  // }, []);
+
   useEffect(() =>{
     camera.current.angle.value.x = props.cameraX;
     camera.current.angle.value.y = props.cameraY;

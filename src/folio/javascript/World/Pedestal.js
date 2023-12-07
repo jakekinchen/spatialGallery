@@ -40,7 +40,7 @@ export default class Pedestal
         const ambientLight = new THREE.AmbientLight( 0xFFFFFF, 1 );
 
         this.scene.add( ambientLight );
-        const dirLight = new THREE.DirectionalLight( 0xefefff, 10 );
+        const dirLight = new THREE.DirectionalLight( 0xefefff, 8 );
         dirLight.position.set(this.x - 1, -5, 8 );
         this.scene.add( dirLight );
         console.log(ambientLight.position);
@@ -75,28 +75,28 @@ export default class Pedestal
                 height: .1, // adjust depth
             });
 
-            const material = new THREE.MeshBasicMaterial({ 
-                transparent: false, 
-                depthWrite: false, 
-                color: 0x000000
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x00ff00
             });
 
             material.opacity = 1;
 
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(this.x-1.675, this.y-.4, .2);
+            mesh.position.set(this.x-1, this.y, 1);
             mesh.matrixAutoUpdate = false;
+            this.scene.add(mesh);
             mesh.updateMatrix();
 
-            this.pedestal.label = this.objects.add({
-                base: { children: [mesh] },
-                material: material,
-                collision: { children: [mesh] },
-                mass: 0,
-                offset: new THREE.Vector3(0, 0, 1),
-                rotation: new THREE.Euler(0, 0, 0),
-                sleep: true
-            });
+            // this.pedestal.label = this.objects.add({
+            //     base: { children: [mesh] },
+            //     material: material,
+            //     collision: { children: [mesh] },
+            //     mass: 0,
+            //     offset: new THREE.Vector3(0, 0, 1),
+            //     rotation: new THREE.Euler(0, 0, 0),
+            //     sleep: true
+            // });
+            console.log(this.pedestal.label);
         }, undefined, (error) => {
             console.error('Error loading font:', error);
         });
