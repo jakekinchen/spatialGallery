@@ -164,7 +164,7 @@ const createJSONDocument = async (directoryPath, mode) => {
   return { shouldUpload, jsonFilePath };
 }
 
-module.exports = {
+export {
   createJSONDocument,
   updateStorageWithDocsBox,
 };

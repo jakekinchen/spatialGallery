@@ -1,8 +1,8 @@
-const axios = require('axios');
-const ignore = require('ignore');
-const fs = require('fs-extra');
-const path = require('path');
-const {
+import axios from 'axios';
+import fs from 'fs-extra';
+import path from 'path';
+import ignore from 'ignore';
+import {
   listFiles,
   uploadFile,
   deleteFile,
@@ -89,6 +89,7 @@ async function updateAssistantJSON(assistantId) {
 
 // Main function to create an assistant and upload a file
 async function createAndUploadAssistant() {
+  let assistantId = null;
   const codebasePath = './Genie/cachedFiles/codebase.json';
   const data = await readJSON();
   if (uploadCodebase) {
@@ -265,7 +266,7 @@ async function main() {
   }
 }
 
-module.exports = {
+export {
   createAndUploadAssistant,
   uploadFileIntoAssistant,
   updateAssistantJSON,

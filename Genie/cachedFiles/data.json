@@ -1,0 +1,41 @@
+{
+  "assistants": [
+    {
+      "assistantId": "asst_iArcZvYxp23BBE6YXdijJ11z"
+    }
+  ],
+  "files": [
+    {
+      "name": "wholefoodsorders.json",
+      "type": "json",
+      "path": "Genie/docsBox/wholefoodsorders.json",
+      "lastModified": 1701654182113.125,
+      "size": 616195,
+      "fileId": "file-Bk5oJ23m9pXi5YLM57xyjUWR"
+    },
+    {
+      "name": "wholefoodsorders2.json",
+      "type": "json",
+      "path": "Genie/docsBox/wholefoodsorders2.json",
+      "lastModified": 1701654184145.6277,
+      "size": 641864,
+      "fileId": "file-Rx6s1DqFWZ5zL6kzx2c5OAqs"
+    },
+    {
+      "name": "wholefoodsorders3.json",
+      "type": "json",
+      "path": "Genie/docsBox/wholefoodsorders3.json",
+      "lastModified": 1701654185658.3772,
+      "size": 629423,
+      "fileId": "file-nae1KAihkYTkKLETjGCIOU4e"
+    },
+    {
+      "name": "wholefoodsorders4.json",
+      "type": "json",
+      "path": "Genie/docsBox/wholefoodsorders4.json",
+      "lastModified": 1701654187253.4065,
+      "size": 593595,
+      "fileId": "file-nKFCcjntgNpRCjxP4b3dxZEd"
+    }
+  ]
+}

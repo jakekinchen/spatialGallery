@@ -10,8 +10,6 @@ import { convertCsvToJson } from './config.js';
 dotenv.config({path: 'Genie/.env'}); // Load the environment variables from a .env file
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY); // Initialize the OpenAI client with your API key
-const fsp = require('fs').promises; // Make sure to use the promises version for async/await
-const fs = require('fs'); // Import fs to work with the file system
 
 const storagePath = './Genie/cachedFiles/data.json';
 

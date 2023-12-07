@@ -25,7 +25,6 @@ async function convertCsvToJson(csvFilePath, jsonFilePath) {
 export {
     code_extensions,
     docs_extensions,
-    assistantDesription,
     assistantInstructions,
     assistantName,
     docsBoxPath,
