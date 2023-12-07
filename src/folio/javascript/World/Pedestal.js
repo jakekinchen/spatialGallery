@@ -8,6 +8,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { Loader } from 'three';
+import Label from './Label'
 
 export default class Pedestal
 {
@@ -40,7 +41,7 @@ export default class Pedestal
         const ambientLight = new THREE.AmbientLight( 0xFFFFFF, 1 );
 
         this.scene.add( ambientLight );
-        const dirLight = new THREE.DirectionalLight( 0xefefff, 10 );
+        const dirLight = new THREE.DirectionalLight( 0xefefff, 8 );
         dirLight.position.set(this.x - 1, -5, 8 );
         this.scene.add( dirLight );
         console.log(ambientLight.position);
@@ -58,14 +59,15 @@ export default class Pedestal
         this.setButton();
         //this.setPlaceholder();
         this.addButtonFunctionality();
+        //this.setLabel();
         //this.setTest();
-        this.setAddThisMediaLabel();
+        //this.setAddMediaLabel();
         //this.setObject();
        //this.setBowlingBall();
        //this.setBoard();
     }
 
-    setAddThisMediaLabel() {
+    setAddMediaLabel() {
         const loader = new FontLoader();
 
         loader.load('fonts/comic_neue.json', (font) => {
@@ -76,27 +78,31 @@ export default class Pedestal
             });
 
             const material = new THREE.MeshBasicMaterial({ 
-                transparent: false, 
+                transparent: true, 
                 depthWrite: false, 
                 color: 0x000000
             });
+            
 
             material.opacity = 1;
 
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(this.x-1.675, this.y-.4, .2);
+            mesh.position.set(this.x-1, this.y, 1);
             mesh.matrixAutoUpdate = false;
+            this.scene.add(mesh);
             mesh.updateMatrix();
+
 
             this.pedestal.label = this.objects.add({
                 base: { children: [mesh] },
-                material: material,
+                material: { children:[material]},
                 collision: { children: [mesh] },
                 mass: 0,
                 offset: new THREE.Vector3(0, 0, 1),
                 rotation: new THREE.Euler(0, 0, 0),
                 sleep: true
             });
+
         }, undefined, (error) => {
             console.error('Error loading font:', error);
         });
@@ -370,6 +376,19 @@ setCar(){
                 this.wheels.items.push(object)
                 this.pedestal.add(object)
             }
+}
+
+setLabel(){
+    this.label = new Label({
+        objects: this.objects,
+        text: 'Add Media',
+        size: .6,
+        height: .1,
+        color: 0x000000,
+        x: this.x,
+        y: this.y,
+        z: 0
+    });
 }
 
 

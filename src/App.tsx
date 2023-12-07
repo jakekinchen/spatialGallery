@@ -8,6 +8,7 @@ function App() {
 
   return (
     <div className="w-screen h-screen">
+
             <Leva collapsed oneLineLabels />
       <FolioCanvas />
     </div>

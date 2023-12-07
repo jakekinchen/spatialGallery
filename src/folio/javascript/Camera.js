@@ -295,6 +295,7 @@ export default class Camera
         window.addEventListener('mousedown', (_event) =>
         {
             this.pan.down(_event.clientX, _event.clientY)
+            console.log(this.pan);
         })
 
         window.addEventListener('mousemove', (_event) =>
@@ -305,6 +306,10 @@ export default class Camera
         window.addEventListener('mouseup', () =>
         {
             this.pan.up()
+        })
+        window.addEventListener('contextmenu', (_event) =>
+        {
+            console.log(this.angle  )
         })
 
         // Touch
