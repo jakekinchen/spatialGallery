@@ -34,38 +34,43 @@ export default class Car
         this.setModels()
         this.setMovement()
         this.setChassis()
-        this.setAntena()
-        this.setBackLights()
-        this.setWheels()
+        //this.setAntena()
+        //this.setBackLights()
+        //this.setWheels()
         this.setTransformControls()
-        this.setShootingBall()
-        this.setKlaxon()
+        //this.setShootingBall()
+        //this.setKlaxon()
+        // Set all members of this.models to be invisible
+        
     }
 
     setModels()
     {
         this.models = {}
 
-        // Cyber truck
+
         if(this.config.cyberTruck)
-        {
+        {/*
             this.models.chassis = this.resources.items.carCyberTruckChassis
             this.models.antena = this.resources.items.carCyberTruckAntena
             this.models.backLightsBrake = this.resources.items.carCyberTruckBackLightsBrake
             this.models.backLightsReverse = this.resources.items.carCyberTruckBackLightsReverse
             this.models.wheel = this.resources.items.carCyberTruckWheel
+            */
         }
-
         // Default
         else
         {
-            this.models.chassis = this.resources.items.carDefaultChassis
-            this.models.antena = this.resources.items.carDefaultAntena
+            this.models.chassis = new THREE.Object3D()
+            this.models.chassis.scene = new THREE.Scene()
+            this.models.chassis.scene.object = new THREE.Object3D()
+            //this.models.chassis = this.resources.items.brickBase
+            //this.models.antena = this.resources.items.carDefaultAntena
             // this.models.bunnyEarLeft = this.resources.items.carDefaultBunnyEarLeft
             // this.models.bunnyEarRight = this.resources.items.carDefaultBunnyEarRight
-            this.models.backLightsBrake = this.resources.items.carDefaultBackLightsBrake
-            this.models.backLightsReverse = this.resources.items.carDefaultBackLightsReverse
-            this.models.wheel = this.resources.items.carDefaultWheel
+            //this.models.backLightsBrake = this.resources.items.carDefaultBackLightsBrake
+            //this.models.backLightsReverse = this.resources.items.carDefaultBackLightsReverse
+            //this.models.wheel = this.resources.items.carDefaultWheel
         }
     }
 
@@ -82,12 +87,12 @@ export default class Car
         {
             // Movement
             const movementSpeed = new THREE.Vector3()
-            movementSpeed.copy(this.chassis.object.position).sub(this.chassis.oldPosition)
+            //movementSpeed.copy(this.chassis.object.position).sub(this.chassis.oldPosition)
             this.movement.acceleration = movementSpeed.clone().sub(this.movement.speed)
             this.movement.speed.copy(movementSpeed)
 
-            this.movement.localSpeed = this.movement.speed.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), - this.chassis.object.rotation.z)
-            this.movement.localAcceleration = this.movement.acceleration.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), - this.chassis.object.rotation.z)
+            //this.movement.localSpeed = this.movement.speed.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), - this.chassis.object.rotation.z)
+            //this.movement.localAcceleration = this.movement.acceleration.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), - this.chassis.object.rotation.z)
 
             // Sound
             //this.sounds.engine.speed = this.movement.localSpeed.x
@@ -109,7 +114,7 @@ export default class Car
         this.chassis.oldPosition = this.chassis.object.position.clone()
         this.container.add(this.chassis.object)
 
-        this.shadows.add(this.chassis.object, { sizeX: 3, sizeY: 2, offsetZ: 0.2 })
+        //this.shadows.add(this.chassis.object, { sizeX: 1, sizeY: 1, offsetZ: 0.2 })
 
         // Time tick
         this.time.on('tick', () =>

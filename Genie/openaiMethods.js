@@ -52,7 +52,7 @@ async function writeJSON(data) {
 async function updateFileInJSON(updateData) {
   const data = await readJSON();
   if (!data) return;
-  
+
   const file = data.files.find(file => file.name === updateData.name);
   if (file) {
     Object.assign(file, updateData);
@@ -191,30 +191,30 @@ async function retrieveFileContent(fileId) {
 
 // Function to create an assistant
 async function createAssistant(model, name, description, instructions, tools, file_ids, metadata) {
-    try {
+  try {
 
-        // Replace the below line with the actual OpenAI API call to create the assistant
-        const response = await openai.beta.assistants.create({
-            model,
-            name,
-            description,
-            instructions,
-            tools,
-            file_ids,
-            metadata,
-        });
-        // Update the JSON storage with the assistant ID
-        const newAssistant = {
-          assistantId: response.id,
-        };
-        const data = await readJSON();
-        data.assistants.push(newAssistant);
-        await writeJSON(data);
-        return response; // Return the assistant data
-    } catch (error) {
-        console.error("Error creating assistant:", error);
-        throw error; // Rethrow the error to be caught in the calling function
-    }
+    // Replace the below line with the actual OpenAI API call to create the assistant
+    const response = await openai.beta.assistants.create({
+      model,
+      name,
+      description,
+      instructions,
+      tools,
+      file_ids,
+      metadata,
+    });
+    // Update the JSON storage with the assistant ID
+    const newAssistant = {
+      assistantId: response.id,
+    };
+    const data = await readJSON();
+    data.assistants.push(newAssistant);
+    await writeJSON(data);
+    return response; // Return the assistant data
+  } catch (error) {
+    console.error("Error creating assistant:", error);
+    throw error; // Rethrow the error to be caught in the calling function
+  }
 }
 
 
@@ -228,64 +228,64 @@ async function retrieveAssistant(assistantId) {
     return null; // Return null if there was an error retrieving the assistant
   }
 }
-  // Function to modify an assistant
-  async function modifyAssistant(assistantId, changes) {
-    try {
-      const response = await openai.beta.assistants.update(assistantId, changes);
-      updateAssistantInJSON(assistantId, changes);
-      console.log("Assistant updated:", response);
-    } catch (error) {
-      console.error("Error updating assistant:", error);
-    }
+// Function to modify an assistant
+async function modifyAssistant(assistantId, changes) {
+  try {
+    const response = await openai.beta.assistants.update(assistantId, changes);
+    updateAssistantInJSON(assistantId, changes);
+    console.log("Assistant updated:", response);
+  } catch (error) {
+    console.error("Error updating assistant:", error);
   }
+}
 
-  // Function to delete an assistant
-  async function deleteAssistant(assistantId) {
-    try {
-      const response = await openai.beta.assistants.del(assistantId);
-      // Update the JSON storage with the assistant ID
-      await deleteAssistantJSON(assistantId);
-      console.log("Assistant deleted:", response);
-    } catch (error) {
-      console.error("Error deleting assistant:", error);
-    }
-  }
-
-  // Function to delete all assistants
-  async function deleteAllAssistants() {
-    try {
-      const assistants = await listAssistants();
-      assistants.forEach(async (assistant) => {
-        await deleteAssistant(assistant.id);
-      });
-      return true;
-    } catch (error) {
-      console.error("Error deleting assistants:", error);
-    }
-    console.log("All assistants deleted.");
-    console.log("Assistants: ", await listAssistants());
-  }
-
-  async function updateAssistantJSON(assistantId) {
+// Function to delete an assistant
+async function deleteAssistant(assistantId) {
+  try {
+    const response = await openai.beta.assistants.del(assistantId);
     // Update the JSON storage with the assistant ID
-    // Read the data.json file
-    const data = JSON.parse(fs.readFileSync(storagePath));
-    // Add a new object in the assistants array with the assistant ID
-    data.assistants.push({ assistantId: assistantId });
-    // Write the updated data back to the JSON storage
-    fs.writeFileSync(storagePath, JSON.stringify(data));
+    await deleteAssistantJSON(assistantId);
+    console.log("Assistant deleted:", response);
+  } catch (error) {
+    console.error("Error deleting assistant:", error);
   }
-  
-  async function deleteAssistantJSON(assistantId) {
-    // Remove the assistant object with the given ID from the JSON storage
-    // Read the data.json file
-    const data = JSON.parse(fs.readFileSync(storagePath));
-    // Remove the assistant object with the given ID
-    const assistantIndex = data.assistants.findIndex(assistant => assistant.assistantId === assistantId);
-    data.assistants.splice(assistantIndex, 1);
-    // Write the updated data back to the JSON storage
-    fs.writeFileSync(storagePath, JSON.stringify(data));
+}
+
+// Function to delete all assistants
+async function deleteAllAssistants() {
+  try {
+    const assistants = await listAssistants();
+    assistants.forEach(async (assistant) => {
+      await deleteAssistant(assistant.id);
+    });
+    return true;
+  } catch (error) {
+    console.error("Error deleting assistants:", error);
   }
+  console.log("All assistants deleted.");
+  console.log("Assistants: ", await listAssistants());
+}
+
+async function updateAssistantJSON(assistantId) {
+  // Update the JSON storage with the assistant ID
+  // Read the data.json file
+  const data = JSON.parse(fs.readFileSync(storagePath));
+  // Add a new object in the assistants array with the assistant ID
+  data.assistants.push({ assistantId: assistantId });
+  // Write the updated data back to the JSON storage
+  fs.writeFileSync(storagePath, JSON.stringify(data));
+}
+
+async function deleteAssistantJSON(assistantId) {
+  // Remove the assistant object with the given ID from the JSON storage
+  // Read the data.json file
+  const data = JSON.parse(fs.readFileSync(storagePath));
+  // Remove the assistant object with the given ID
+  const assistantIndex = data.assistants.findIndex(assistant => assistant.assistantId === assistantId);
+  data.assistants.splice(assistantIndex, 1);
+  // Write the updated data back to the JSON storage
+  fs.writeFileSync(storagePath, JSON.stringify(data));
+}
 
 // Function to create an assistant file by attaching a File to an assistant
 async function createAssistantFile(assistantId, fileId) {
@@ -300,37 +300,37 @@ async function createAssistantFile(assistantId, fileId) {
   }
 }
 
-  // Function to retrieve an assistant file
-  async function retrieveAssistantFile(assistantId, fileId) {
-    try {
-      const response = await openai.beta.assistants.files.retrieve(assistantId, fileId);
-      console.log("Assistant file retrieved:", response.data);
-      return response; // Return the data for further processing
-    } catch (error) {
-      console.error("Error retrieving assistant file:", error);
-      throw error; // Re-throw the error to be handled by the caller
-    }
+// Function to retrieve an assistant file
+async function retrieveAssistantFile(assistantId, fileId) {
+  try {
+    const response = await openai.beta.assistants.files.retrieve(assistantId, fileId);
+    console.log("Assistant file retrieved:", response.data);
+    return response; // Return the data for further processing
+  } catch (error) {
+    console.error("Error retrieving assistant file:", error);
+    throw error; // Re-throw the error to be handled by the caller
   }
+}
 
-  // Function to delete an assistant file
-  async function deleteAssistantFile(assistantId, fileId) {
-    try {
-      const response = await openai.beta.assistants.files.del(assistantId, fileId);
-      //console.log("Assistant file deleted:", response);
-    } catch (error) {
-      console.error("Error deleting assistant file:", error);
-    }
+// Function to delete an assistant file
+async function deleteAssistantFile(assistantId, fileId) {
+  try {
+    const response = await openai.beta.assistants.files.del(assistantId, fileId);
+    //console.log("Assistant file deleted:", response);
+  } catch (error) {
+    console.error("Error deleting assistant file:", error);
   }
+}
 
-  // Function to list assistant files
-  async function listAssistantFiles(assistantId) {
-    try {
-      const response = await openai.beta.assistants.files.list(assistantId);
-      return response.data;
-    } catch (error) {
-      console.error("Error listing assistant files:", error);
-    }
+// Function to list assistant files
+async function listAssistantFiles(assistantId) {
+  try {
+    const response = await openai.beta.assistants.files.list(assistantId);
+    return response.data;
+  } catch (error) {
+    console.error("Error listing assistant files:", error);
   }
+}
 
 // Function to get assistant id
 async function getActiveAssistant() {
@@ -370,7 +370,7 @@ async function listAssistantDetails() {
     }
 
     // Get the ID of the first assistant from the data array
-    const assistantId = assistantsResponse[0].id; 
+    const assistantId = assistantsResponse[0].id;
 
     const assistantResponse = await retrieveAssistant(assistantId);
 
@@ -379,30 +379,30 @@ async function listAssistantDetails() {
       return null;
     }
     return assistantResponse; // Assuming this is the correct assistant object with an ID
-    
+
   } catch (error) {
     console.error('Error in listing assistant details:', error);
     return null; // Return null in case of error
   }
 }
 
-  // Export all functions
-  export {
-    listFiles,
-    uploadFile,
-    deleteFile,
-    retrieveFileInfo,
-    retrieveFileContent,
-    createAssistant,
-    retrieveAssistant,
-    modifyAssistant,
-    deleteAssistant,
-    createAssistantFile,
-    retrieveAssistantFile,
-    deleteAssistantFile,
-    listAssistantFiles,
-    listAssistantDetails,
-    listAssistants,
-    getActiveAssistant,
-    deleteAllAssistants,
-  };
+// Export all functions
+export {
+  listFiles,
+  uploadFile,
+  deleteFile,
+  retrieveFileInfo,
+  retrieveFileContent,
+  createAssistant,
+  retrieveAssistant,
+  modifyAssistant,
+  deleteAssistant,
+  createAssistantFile,
+  retrieveAssistantFile,
+  deleteAssistantFile,
+  listAssistantFiles,
+  listAssistantDetails,
+  listAssistants,
+  getActiveAssistant,
+  deleteAllAssistants,
+};

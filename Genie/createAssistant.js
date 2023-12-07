@@ -31,37 +31,37 @@ const allowedExtensions = new Set(code_extensions);
 const filePath = './Genie/cachedFiles/data.json';
 
 async function commentFilePaths(dirPath = '/../') {
-    // Helper function to insert a comment at the top of a file
-    const prependComment = (filePath, comment) => {
-        const data = fs.readFileSync(filePath, 'utf8');
-        const commentedData = `// ${comment}\n${data}`;
-        fs.writeFileSync(filePath, commentedData, 'utf8');
-    };
+  // Helper function to insert a comment at the top of a file
+  const prependComment = (filePath, comment) => {
+    const data = fs.readFileSync(filePath, 'utf8');
+    const commentedData = `// ${comment}\n${data}`;
+    fs.writeFileSync(filePath, commentedData, 'utf8');
+  };
 
-    // Recursive function to process each file/directory
-    const processDirectory = async (currentPath) => {
-        const entries = fs.readdirSync(currentPath, { withFileTypes: true });
+  // Recursive function to process each file/directory
+  const processDirectory = async (currentPath) => {
+    const entries = fs.readdirSync(currentPath, { withFileTypes: true });
 
-        for (const entry of entries) {
-            const fullPath = path.join(currentPath, entry.name);
+    for (const entry of entries) {
+      const fullPath = path.join(currentPath, entry.name);
 
-            // If entry is a directory, recurse into it
-            if (entry.isDirectory()) {
-                await processDirectory(fullPath);
-            } else {
-                const relativePath = path.relative(dirPath, fullPath);
-                // Check if the file is ignored or not an allowed extension
-                if (ig.ignores(relativePath) || !allowedExtensions.has(path.extname(entry.name))) {
-                    continue;
-                }
-                // Prepend the relative path comment to the file
-                prependComment(fullPath, `Path: ${relativePath}`);
-            }
+      // If entry is a directory, recurse into it
+      if (entry.isDirectory()) {
+        await processDirectory(fullPath);
+      } else {
+        const relativePath = path.relative(dirPath, fullPath);
+        // Check if the file is ignored or not an allowed extension
+        if (ig.ignores(relativePath) || !allowedExtensions.has(path.extname(entry.name))) {
+          continue;
         }
-    };
+        // Prepend the relative path comment to the file
+        prependComment(fullPath, `Path: ${relativePath}`);
+      }
+    }
+  };
 
-    // Start processing from the root directory
-    await processDirectory(dirPath);
+  // Start processing from the root directory
+  await processDirectory(dirPath);
 }
 
 async function updateAssistantJSON(assistantId) {
@@ -98,40 +98,40 @@ async function createAndUploadAssistant() {
     if (!storage || !storage.files || !storage.files.find(f => f.name === 'codebase.json')) {
 
 
-    const response = await uploadFile(codebasePath);
-    
-    if (!response || !response.id) {
-      console.error('Failed to upload codebase file.');
-      return;
+      const response = await uploadFile(codebasePath);
+
+      if (!response || !response.id) {
+        console.error('Failed to upload codebase file.');
+        return;
+      }
+      const codebaseFileId = response.id;
+      console.log('Codebase file ID:', codebaseFileId);
     }
-    const codebaseFileId = response.id;
-    console.log('Codebase file ID:', codebaseFileId);
-  }
   }
   try {
-      // Create the assistant
-      const assistant = await createAssistant(
-          'gpt-4-1106-preview', // model
-          assistantName, // name
-          assistantDescription, // description
-          assistantInstructions, // instructions
-          [{ "type": "retrieval" }], // tools
-          [], // file_ids will be updated after file upload
-          {} // metadata
-      );
+    // Create the assistant
+    const assistant = await createAssistant(
+        'gpt-4-1106-preview', // model
+        assistantName, // name
+        assistantDescription, // description
+        assistantInstructions, // instructions
+        [{ "type": "retrieval" }], // tools
+        [], // file_ids will be updated after file upload
+        {} // metadata
+    );
 
-      const assistantId = assistant.id;
-       // Read the files in the data.json file and use their IDs to create assistant files attached to the assistant
-      await createAssistantFiles(assistantId);
-      // list assistant files
-      const assistantFiles = await listAssistantFiles(assistantId);
-      console.log('Assistant files:', assistantFiles);
-        return assistantId;
+    const assistantId = assistant.id;
+    // Read the files in the data.json file and use their IDs to create assistant files attached to the assistant
+    await createAssistantFiles(assistantId);
+    // list assistant files
+    const assistantFiles = await listAssistantFiles(assistantId);
+    console.log('Assistant files:', assistantFiles);
+    return assistantId;
 
   } catch (error) {
-      console.error('Error in creating or uploading assistant:', error);
-      // If there is an error, delete the assistant
-      await deleteAssistant(assistantId);
+    console.error('Error in creating or uploading assistant:', error);
+    // If there is an error, delete the assistant
+    await deleteAssistant(assistantId);
   }
 }
 
@@ -257,12 +257,12 @@ async function deleteAllFiles() {
 async function main() {
   try {
     //console.log(await listFiles());
-   //await delete_all_files();
+    //await delete_all_files();
 
-    
+
   } catch (error) {
     console.error('Error:', error);
-    
+
   }
 }
 

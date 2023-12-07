@@ -14,7 +14,9 @@ export default class Button {
     this.color = _options.color || 0xffffff;
     this.shadows = _options.shadows || false;
     this.text = _options.text || '';
+    this.size = _options.size || .6;
     this.size = _options.size || 1;
+
     this.hoverColor = _options.hoverColor || 0xffffff;
     this.onClick = _options.onClick || function() {};
     this.container = new THREE.Object3D();
@@ -56,14 +58,13 @@ export default class Button {
     });
 
     // Create button geometry
+
     this.buttonMesh = this.usePredefinedGeometry && _options.base ? 
       _options.base.clone() : 
       new THREE.Mesh(
         new RoundedBoxGeometry(this.size * 2, this.size, 0.3, 5, 0.1),
         new THREE.MeshBasicMaterial({
           color: this.color,
-          specular: 0x050505,
-          shininess: 100
         })
         
       );
@@ -75,7 +76,6 @@ export default class Button {
     // Position the button mesh
     this.buttonMesh.position.copy(this.position);
     this.container.add(this.buttonMesh);
-
 
     // Add interactivity
     //this.addInteractivity();

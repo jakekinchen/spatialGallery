@@ -126,7 +126,7 @@ import informationActivitiesSource from '../models/information/static/activities
 import startStaticBaseSource from '../models/start/static/button.glb'
 import startStaticCollisionSource from '../models/start/static/collision.glb'
  import startStaticFloorShadowSource from '../models/start/static/floorShadow.png'
- //import startStaticButtonTextureSource from '../models/start/static/plus.png'
+ import startStaticButtonSource from '../models/start/static/plus.png'
 
 // Playground
 import playgroundStaticFloorShadowSource from '../models/playground/static/floorShadow.png'
@@ -175,6 +175,7 @@ import webbyTrophyCollisionSource from '../models/webbyTrophy/collision.glb'
 // Lemon
 import lemonBaseSource from '../models/lemon/base.glb'
 import lemonCollisionSource from '../models/lemon/collision.glb'
+import hexaBaseSource from '../models/lemon/hexa.glb'
 
 // Bowling ball
 import bowlingBallBaseSource from '../models/bowlingBall/base.glb'
@@ -354,7 +355,7 @@ export default class Resources extends EventEmitter
             { name: 'startStaticBase', source: startStaticBaseSource },
             { name: 'startStaticCollision', source: startStaticCollisionSource },
            { name: 'startStaticFloorShadow', source: startStaticFloorShadowSource, type: 'texture' },
-             // { name: 'startStaticButtonTexture', source: startStaticButtonTextureSource, type: 'texture' },
+             { name: 'startStaticButton', source: startStaticButtonSource, type: 'texture' },
 
             // Playground
             { name: 'playgroundStaticBase', source: playgroundStaticBaseSource },
@@ -401,6 +402,8 @@ export default class Resources extends EventEmitter
             // Lemon
             { name: 'lemonBase', source: lemonBaseSource },
             { name: 'lemonCollision', source: lemonCollisionSource },
+            { name: 'hexaBase', source: hexaBaseSource },
+
 
             // Bownling ball
             { name: 'bowlingBallBase', source: bowlingBallBaseSource },

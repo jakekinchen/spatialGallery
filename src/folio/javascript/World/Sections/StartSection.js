@@ -1,4 +1,7 @@
 import * as THREE from 'three'
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import Pedestal from '../Pedestal';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 
 export default class StartSection
 {
@@ -12,6 +15,9 @@ export default class StartSection
         this.walls = _options.walls
         this.tiles = _options.tiles
         this.debug = _options.debug
+        this.camera = _options.camera
+        this.renderer = _options.renderer
+        this.scene = _options.scene
         this.x = _options.x
         this.y = _options.y
 
@@ -21,7 +27,6 @@ export default class StartSection
             this.debugFolder = this.debug.addFolder('startSection')
             // this.debugFolder.open()
         }
-
         // Set up
         this.container = new THREE.Object3D()
         this.container.matrixAutoUpdate = false
@@ -29,23 +34,50 @@ export default class StartSection
         this.resources.items.areaResetTexture.magFilter = THREE.NearestFilter
         this.resources.items.areaResetTexture.minFilter = THREE.LinearFilter
 
-        this.setStatic()
-
+        // Assuming this is within a class that has access to this.objects, this.resources, etc.
+        this.setPedestal()
+        this.setTest()
+        
     }
 
-    setStatic()
-    {
+    setTest(){
+        const buttonGeometry =  new RoundedBoxGeometry(2, 1, 0.1, 0.1, 0.1, 0.1, 0.05);
 
-        this.objects.add({
-            base: this.resources.items.pedestalBase.scene,
-            collision: this.resources.items.startStaticCollision.scene,
-            floorShadowTexture: this.resources.items.startStaticFloorShadowTexture,
-            material : this.resources.items.startStaticMaterial,
-            offset: new THREE.Vector3(this.x, this.y, 1),
-            mass: 0,
-            rotation: new THREE.Euler( 0, 0, 0),
-        })
+        // Create button material
+        const buttonMaterial = new THREE.MeshBasicMaterial({
+            color: 0x0000ff,
+            transparent: false,
+            opacity: 0.5,
+            side: THREE.DoubleSide,
+        });
+
+        // Create button mesh
+        this.mesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+
+        // Add mesh to container
+        this.container.add(this.mesh);
     }
+
+
+    setPedestal(){
+        this.pedestal = new Pedestal({
+            camera: this.camera,
+            renderer: this.renderer,
+            scene: this.scene,
+            time: this.time,
+            resources: this.resources,
+            objects: this.objects,
+            areas: this.areas,
+            walls: this.walls,
+            tiles: this.tiles,
+            debug: this.debug,
+            x: this.x,
+            y: this.y
+        });
+    }
+
+
+
 
 
 }

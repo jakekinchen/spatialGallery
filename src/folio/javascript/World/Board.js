@@ -7,6 +7,7 @@ import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
 import {FontLoader} from "three/examples/jsm/loaders/FontLoader";
 
 
+
 export default class Board
 {
     constructor(_options) {
@@ -52,8 +53,6 @@ export default class Board
         this.setAddMediaLabel()
          
          // Make startLabel.image slightly larger
-         
-         
         const fileInput = document.getElementById('fileInput');
         this.planeMesh.area.on('interact', () =>
         {

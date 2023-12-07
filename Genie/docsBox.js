@@ -1,8 +1,4 @@
-const {
-    docsBoxPath,
-    docsBoxFileLimit,
-    docsBoxFileSizeLimit,
-} = require('./config')
+import {docsBoxPath,docsBoxFileLimit,docsBoxFileSizeLimit} from './config.js'
 
 class docsBox {
     constructor() {

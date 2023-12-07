@@ -83,6 +83,24 @@ export default class Area extends EventEmitter
         this.container.add(this.floorBorder.mesh)
     }
 
+    setIcon(){
+        // Set a plus icon on the area and add it to the container
+        this.icon = {}
+        this.icon.geometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+        this.icon.texture = this.resources.items.startStaticButtonTexture
+        console.log("Resources: ",this.resources.items.areaEnterTexture)
+        console.log("Icon texture: ",this.resources.items)
+        this.icon.material = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+            depthWrite: false,
+        })
+        this.icon.mesh = new THREE.Mesh(this.icon.geometry, this.icon.material);
+        this.icon.mesh.position.set(this.x, this.y, 1);
+
+    }
+
     setFence()
     {
         // Set up
@@ -94,11 +112,11 @@ export default class Area extends EventEmitter
         this.fence.geometry = new AreaFenceBufferGeometry(this.halfExtents.x * 2, this.halfExtents.y * 2, this.fence.depth)
 
         // Material
-        // this.fence.material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.5 })
+        //this.fence.material = new THREE.MeshBasicMaterial({ color: 0xFF5733, wireframe: false, transparent: true, opacity: 0.5 })
         this.fence.material = new AreaFenceMaterial()
         this.fence.material.uniforms.uBorderAlpha.value = 0.5
         this.fence.material.uniforms.uStrikeAlpha.value = 0.25
-
+        this.fence.material.uniforms.uColor.value = new THREE.Color(0xE0FFFF)
         // Mesh
         this.fence.mesh = new THREE.Mesh(this.fence.geometry, this.fence.material)
         this.fence.mesh.position.z = - this.fence.depth

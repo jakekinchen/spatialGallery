@@ -256,6 +256,7 @@ const Folio = (props) => {
       time: time.current,
       sizes: sizes.current,
       camera: camera.current,
+      scene: scene,
       renderer: renderer,
       passes: passes.current,
     }) as WorldType;
@@ -283,9 +284,7 @@ const Folio = (props) => {
       title.current.position = Math.round(
         title.current.absolutePosition % title.current.width
       );
-      document.title = `${"_".repeat(
-        title.current.width - title.current.position
-      )}🚗${"_".repeat(title.current.position)}`;
+      document.title = `✨⚡️✨⚡️✨⚡️`;
     }, title.current.frequency);
   }, []);
   /*const setThreejsJourney = useCallback(() => {
@@ -296,10 +295,6 @@ const Folio = (props) => {
     });
   }, []);*/
   useEffect(() =>{
-    console.log(camera.current)
-    console.log(camera.current.orbitControls)
-    console.log(camera.current.instance)
-    console.log(world.current.car)
     camera.current.angle.value.x = props.cameraX;
     camera.current.angle.value.y = props.cameraY;
     camera.current.angle.value.z = props.cameraZ;

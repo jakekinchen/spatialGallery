@@ -32,16 +32,16 @@ const shouldIgnoreFile = (file, mode='docs') => {
     console.log(`Ignoring file '${file}' - Path: ${ignoreDueToPath}, Directory: ${ignoreDueToDirectory}, Gitignore: ${ignoreDueToGitignore}`);
     return true;
   }
-  
+
   return false;
 };
 
 // Function to read the contents of a file if it has an allowed extension
 const readFileContents = async (filePath, allowedExtensions) => {
   const ext = path.extname(filePath);
-    const buffer = fs.readFileSync(filePath);
-    const encoding = jschardet.detect(buffer).encoding;
-    return iconv.decode(buffer, encoding).replace(/\r?\n|\r/g, '');
+  const buffer = fs.readFileSync(filePath);
+  const encoding = jschardet.detect(buffer).encoding;
+  return iconv.decode(buffer, encoding).replace(/\r?\n|\r/g, '');
 
 };
 
@@ -99,7 +99,7 @@ const updateJSONStorage = async (fileTree) => {
   for (const file of fileTree) {
     if (file.type === 'file' && file.content !== null) {
       const relativeFilePath = path.relative(docsBoxPath, file.path);
-      
+
       // Check if file is already in storage
       const fileInStorage = storage.files.find(f => f.path === relativeFilePath);
       if (!fileInStorage) {
@@ -122,7 +122,7 @@ const updateStorageWithDocsBox = async () => {
 const createJSONDocument = async (directoryPath, mode) => {
   // Set allowed extensions based on mode
   const allowedExtensions = new Set(
-    mode === 'docs' ? [...code_extensions, ...docs_extensions] : code_extensions
+      mode === 'docs' ? [...code_extensions, ...docs_extensions] : code_extensions
   );
 
   const rootDirectory = mode === 'docs' ? docsBoxPath : path.join(__dirname, '..');

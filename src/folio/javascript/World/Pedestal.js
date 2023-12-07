@@ -6,6 +6,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 
+
 export default class Pedestal
 {
     constructor(_options)
@@ -47,6 +48,7 @@ export default class Pedestal
         this.setButton();
         //this.setPlaceholder();
         this.addButtonFunctionality();
+
         //this.setTest();
         this.setAddMediaLabel();
         //this.setObject();
@@ -147,7 +149,6 @@ export default class Pedestal
             this.container.add(this.addMediaLabel.mesh);
         });
     }
-
 setPlaceholder() {
     // Add a null object to the scene as a child of this.pedestal, it should be 3x3x3
     this.placeholder = new THREE.Object3D();
