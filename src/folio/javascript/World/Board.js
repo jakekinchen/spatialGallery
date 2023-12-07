@@ -3,6 +3,8 @@ import TweenLite from "gsap/TweenLite";
 import {Power4} from "gsap/EasePack";
 import ProjectBoardMaterial from "../Materials/ProjectBoard";
 import {RoundedBoxGeometry} from "three/examples/jsm/geometries/RoundedBoxGeometry";
+import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
+import {FontLoader} from "three/examples/jsm/loaders/FontLoader";
 
 
 export default class Board
@@ -46,6 +48,12 @@ export default class Board
             //Change size of button here
             halfExtents: new THREE.Vector2(3, 1)
         })
+         // Start label
+        this.setAddMediaLabel()
+         
+         // Make startLabel.image slightly larger
+         
+         
         const fileInput = document.getElementById('fileInput');
         this.planeMesh.area.on('interact', () =>
         {
@@ -72,6 +80,40 @@ export default class Board
 
 
     }
+
+    setAddMediaLabel() {
+        // Set up
+        this.addMediaLabel = {}
+    
+        const loader = new FontLoader();
+    
+        loader.load('fonts/comic_neue.json', (font) => {
+            const geometry = new TextGeometry('Add Media', {
+                font: font,
+                size: .7, // adjust size
+                height: 0.01, // adjust depth
+            });
+    
+            this.addMediaLabel.material = new THREE.MeshBasicMaterial({ 
+                transparent: false, 
+                depthWrite: false, 
+                // make the color light blue
+                color: 0xffffff
+            });
+            this.addMediaLabel.material.opacity = 0.5;
+    
+            this.addMediaLabel.mesh = new THREE.Mesh(
+                geometry, 
+                this.addMediaLabel.material
+            );
+            this.addMediaLabel.mesh.position.set(this.x-2.35, this.y-3.28, 0);
+            this.addMediaLabel.mesh.matrixAutoUpdate = false;
+            this.addMediaLabel.mesh.updateMatrix();
+    
+            this.container.add(this.addMediaLabel.mesh);
+        });
+    }
+
     setBoard()
     {
 

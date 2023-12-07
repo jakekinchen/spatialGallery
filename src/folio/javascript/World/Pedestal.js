@@ -3,6 +3,9 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js' 
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { Loader } from 'three';
 
 export default class Pedestal
 {
@@ -39,15 +42,53 @@ export default class Pedestal
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
 
         //this.pedestal = new THREE.Scene();
-        console.log('Pedestal scene created.');
 
         this.setStatic();
         this.setButton();
         //this.setPlaceholder();
         this.addButtonFunctionality();
-        this.setTest();
+        //this.setTest();
+        this.setAddThisMediaLabel();
         //this.setObject();
        //this.setBowlingBall();
+       //this.setBoard();
+    }
+
+    setAddThisMediaLabel() {
+        const loader = new FontLoader();
+
+        loader.load('fonts/comic_neue.json', (font) => {
+            const geometry = new TextGeometry('Add Media', {
+                font: font,
+                size: .6, // adjust size
+                height: .1, // adjust depth
+            });
+
+            const material = new THREE.MeshBasicMaterial({ 
+                transparent: false, 
+                depthWrite: false, 
+                color: 0x000000
+            });
+
+            material.opacity = 1;
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(this.x-1.675, this.y-.4, .2);
+            mesh.matrixAutoUpdate = false;
+            mesh.updateMatrix();
+
+            this.pedestal.label = this.objects.add({
+                base: { children: [mesh] },
+                material: material,
+                collision: { children: [mesh] },
+                mass: 0,
+                offset: new THREE.Vector3(0, 0, 1),
+                rotation: new THREE.Euler(0, 0, 0),
+                sleep: true
+            });
+        }, undefined, (error) => {
+            console.error('Error loading font:', error);
+        });
     }
 
     setTest(){
@@ -113,10 +154,10 @@ export default class Pedestal
 setPlaceholder() {
     // Add a null object to the scene as a child of this.pedestal, it should be 3x3x3
     this.placeholder = new THREE.Object3D();
-    this.placeholder.position.set(this.x-6, this.y+5, 1);
+    this.placeholder.position.set(this.x, this.y, 1);
     this.placeholder.scale.set(3, 3, 3);
     this.pedestal.add(this.placeholder); // Adding directly to the pedestal scene
-    console.log('Placeholder added to pedestal:', this.placeholder);
+  //  console.log('Placeholder added to pedestal:', this.placeholder);
 }
 
 setStatic() {
@@ -125,19 +166,19 @@ setStatic() {
         collision: this.resources.items.startStaticCollision.scene,
         floorShadowTexture: this.resources.items.startStaticFloorShadowTexture,
         material: this.resources.items.startStaticMaterial,
-        offset: new THREE.Vector3(this.x-6, this.y+5, 1),
+        offset: new THREE.Vector3(this.x, this.y, 1),
         mass: 0,
         rotation: new THREE.Euler(0, 0, 0),
     });
-    console.log('Static pedestal mesh added:', this.pedestal.mesh);
+   // console.log('Static pedestal mesh added:', this.pedestal.mesh);
 }
 
 setButton() {
     this.pedestal.button = this.areas.add({
-        position: new THREE.Vector2(this.x-6, this.y+5, 1),
+        position: new THREE.Vector2(this.x, this.y, 1),
         halfExtents: new THREE.Vector2(3, 3),
     });
-    console.log('Button added to pedestal:', this.pedestal.button);
+   // console.log('Button added to pedestal:', this.pedestal.button);
 }
 
 addButtonFunctionality() {
@@ -164,7 +205,7 @@ addButtonFunctionality() {
                 gltfLoader.parse(e.target.result, '', (gltf) => {
                     console.log('Model loaded:', gltf);
                     gltf.scene.scale.set(3, 3, 3);
-                    gltf.scene.position.set(this.x-6, this.y+5, 1);
+                    gltf.scene.position.set(this.x, this.y, 1);
                     this.container.add(gltf.scene);
                     const bboxHelper = new THREE.BoxHelper(gltf.scene, 0xff0000);
                     this.container.add(bboxHelper);

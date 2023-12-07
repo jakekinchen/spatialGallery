@@ -1,8 +1,12 @@
-import fs from 'fs';
+import fs, { read } from 'fs';
+import fsp from 'fs/promises';
 import path from 'path';
 import ignore from 'ignore';
 import { docsBoxPath, docs_extensions, code_extensions, uploadCodebase } from './config.js';
+import { uploadFile, createAssistantFile, getActiveAssistant } from './openaiMethods.js';
 import process from 'process';
+import jschardet from 'jschardet';
+import iconv from 'iconv-lite';
 
 import { fileURLToPath } from 'url';
 
@@ -11,99 +15,111 @@ const __dirname = path.dirname(__filename);
 
 const allowedExtensions = new Set([...code_extensions, ...docs_extensions]);
 
+const storagePath = './Genie/cachedFiles/data.json'
+
 // Load .gitignore rules
 const ig = ignore().add(fs.readFileSync('.gitignore', 'utf8'));
 
 // Check if the file should be ignored based on .gitignore and other criteria
-const shouldIgnoreFile = (file) => {
-  // Make sure the path is relative to the current working directory
+const shouldIgnoreFile = (file, mode='docs') => {
   const relativePath = path.relative(process.cwd(), file);
 
-  // Check if the relative path is valid
-  if (!relativePath || relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
-    return true; // Ignore files outside the current working directory
-  }
+  const ignoreDueToPath = !relativePath || relativePath.startsWith('..') || path.isAbsolute(relativePath);
+  const ignoreDueToDirectory = relativePath.startsWith('.git') || (mode === 'code' && relativePath.startsWith('Genie'));
+  const ignoreDueToGitignore = ig.ignores(relativePath);
 
-  // Ignore files inside .git directory or the Genie directory
-  if (relativePath.startsWith('.git') || relativePath.startsWith('Genie')) {
+  if (ignoreDueToPath || ignoreDueToDirectory || ignoreDueToGitignore) {
+    console.log(`Ignoring file '${file}' - Path: ${ignoreDueToPath}, Directory: ${ignoreDueToDirectory}, Gitignore: ${ignoreDueToGitignore}`);
     return true;
   }
-
-  // Use ignore to check against .gitignore rules
-  return ig.ignores(relativePath);
+  
+  return false;
 };
 
 // Function to read the contents of a file if it has an allowed extension
-const readFileContents = (filePath, allowedExtensions) => {
+const readFileContents = async (filePath, allowedExtensions) => {
   const ext = path.extname(filePath);
-  if (allowedExtensions.has(ext)) {
-    return fs.readFileSync(filePath, 'utf8').replace(/\r?\n|\r/g, '');
-  }
-  return null; // Content is not included for disallowed file types
+    const buffer = fs.readFileSync(filePath);
+    const encoding = jschardet.detect(buffer).encoding;
+    return iconv.decode(buffer, encoding).replace(/\r?\n|\r/g, '');
+
 };
 
-
 // Walk through the directory tree recursively
-const walkSync = (dir, filelist = []) => {
-  const files = fs.readdirSync(dir);
-  files.forEach((file) => {
+const walkAsync = async (dir, filelist = [], mode = 'docs') => {
+  const files = await fsp.readdir(dir);
+  for (const file of files) {
     const dirFile = path.join(dir, file);
-    if (!shouldIgnoreFile(dirFile)) {
-      const stat = fs.statSync(dirFile);
+    if (!shouldIgnoreFile(dirFile) || mode === 'docs') {
+      const stat = await fsp.stat(dirFile);
       if (stat.isDirectory()) {
-        const nestedFiles = walkSync(dirFile); // Recursively get files from the directory
-        nestedFiles.forEach(nestedFile => filelist.push(nestedFile)); // Add them to the main file list
+        const nestedFiles = await walkAsync(dirFile, filelist, mode); // Recursively process directories
+        filelist.push(...nestedFiles); // Add files from nested directories
       } else {
-        filelist.push({ path: dirFile, type: 'file', content: readFileContents(dirFile, allowedExtensions) });
+        const fileContent = await readFileContents(dirFile, allowedExtensions);
+        if (fileContent !== null) { // Only add if content is not null
+          filelist.push({
+            path: dirFile,
+            type: 'file',
+          });
+        }
+        else{
+          console.log(`Content is null for file: ${dirFile}`);
+        }
       }
+    } else {
+      console.log(`Ignoring file: ${dirFile}`);
     }
-  });
+  }
   return filelist;
 };
 
-// Update JSON storage with file and directory details from docsBox
-const updateJSONStorage = (fileTree) => {
-  const storagePath = './data.json';
-  let storage = { assistants: [], files: [] };
-  if (fs.existsSync(storagePath)) {
-    storage = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
+
+async function readJSON(filePath) {
+  if (fs.existsSync(filePath)) {
+    const rawData = fs.readFileSync(filePath);
+    return JSON.parse(rawData);
   }
+  return null;
+}
 
-  const processFiles = (files) => {
-    files.forEach(file => {
-      if (file.type === 'directory') {
-        processFiles(file.contents);
-      } else if (file.content !== null) {
-        const fileDetails = {
-          fileId: null, // Update when the file is uploaded
-          name: path.basename(file.path),
-          type: path.extname(file.path).substring(1),
-          size: fs.statSync(file.path).size,
-          content: file.content
-        };
-        storage.files.push(fileDetails);
-      }
-    });
-  };
-
-  processFiles(fileTree);
-  fs.writeFileSync(storagePath, JSON.stringify(storage, null, 2));
-};
-
-
-// Main function to update JSON storage with docsBox contents
-const updateStorageWithDocsBox = () => {
-  const fileTree = walkSync(docsBoxPath);
-  updateJSONStorage(fileTree);
-};
-
-// Write JSON to a file
-const writeJSON = (data, filePath) => {
+async function writeJSON(data, filePath) {
   const formattedJSON = JSON.stringify(data, null, 2); // Indent with 2 spaces for readability
   fs.writeFileSync(filePath, formattedJSON, 'utf8');
+  return formattedJSON.length;
+}
+
+// Update JSON storage with file and directory details from docsBox
+const updateJSONStorage = async (fileTree) => {
+  let storage = await readJSON(storagePath);
+  if (!storage) {
+    storage = { assistants: [], files: [] };
+  }
+  const assistantID = await getActiveAssistant();
+  for (const file of fileTree) {
+    if (file.type === 'file' && file.content !== null) {
+      const relativeFilePath = path.relative(docsBoxPath, file.path);
+      
+      // Check if file is already in storage
+      const fileInStorage = storage.files.find(f => f.path === relativeFilePath);
+      if (!fileInStorage) {
+        const uploadResponse = await uploadFile(file.path);
+        if (assistantID != null) {
+          const assistantResponse = await createAssistantFile(assistantID, uploadResponse.id);
+          console.log(`Assistant file created: ${assistantResponse}`);
+        }
+      }
+    }
+  }
 };
 
-const createJSONDocument = (directoryPath, mode) => {
+// Main function to update JSON storage with docsBox contents
+const updateStorageWithDocsBox = async () => {
+  const fileTree = await walkAsync(docsBoxPath, [], 'docs');
+  await updateJSONStorage(fileTree);
+};
+
+const createJSONDocument = async (directoryPath, mode) => {
   // Set allowed extensions based on mode
   //console.log("Directory path: ", directoryPath)
   const allowedExtensions = new Set(
@@ -111,7 +127,7 @@ const createJSONDocument = (directoryPath, mode) => {
   );
 
   const rootDirectory = mode === 'docs' ? docsBoxPath : path.join(__dirname, '..');
-  const allFiles = walkSync(path.join(rootDirectory, directoryPath));
+  const allFiles = await walkAsync(path.join(rootDirectory, directoryPath), mode);
   //console.log("Path: ", path.join(rootDirectory, directoryPath))
   // Create JSON entry only for files with allowed extensions
   const jsonData = allFiles.map(file => {
@@ -140,14 +156,15 @@ const createJSONDocument = (directoryPath, mode) => {
   let shouldUpload = true;
   if (fs.existsSync(jsonFilePath)) {
     const oldSize = fs.statSync(jsonFilePath).size;
-    const newSize = writeJSON(jsonData, jsonFilePath);
-    shouldUpload = oldSize !== newSize; // Compare sizes
+    await writeJSON(jsonData, jsonFilePath); // Write JSON data to the file
+    const newSize = fs.statSync(jsonFilePath).size; // Get the new size of the file
+    shouldUpload = oldSize !== newSize; // Compare old and new sizes
   } else {
-    writeJSON(jsonData, jsonFilePath); // Create new JSON file if it doesn't exist
+    await writeJSON(jsonData, jsonFilePath); // Create new JSON file if it doesn't exist
   }
 
   return { shouldUpload, jsonFilePath };
-};
+}
 
 export {
   createJSONDocument,
