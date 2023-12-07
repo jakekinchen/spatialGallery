@@ -49,7 +49,7 @@ export default class Pedestal
         console.log(dirLight);
         this.resources.items.areaResetTexture.magFilter = THREE.NearestFilter;
         this.resources.items.areaResetTexture.minFilter = THREE.LinearFilter;
-
+        this.buttonMesh = "";
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
 
         this.pedestal = new THREE.Scene();
@@ -61,7 +61,7 @@ export default class Pedestal
         this.addButtonFunctionality();
         //this.setLabel();
         //this.setTest();
-        //this.setAddMediaLabel();
+        this.setAddMediaLabel();
         //this.setObject();
        //this.setBowlingBall();
        //this.setBoard();
@@ -78,30 +78,31 @@ export default class Pedestal
             });
 
             const material = new THREE.MeshBasicMaterial({ 
-                transparent: true, 
+                transparent: false,
                 depthWrite: false, 
-                color: 0x000000
+                color: 0xB0C4DE
             });
             
 
             material.opacity = 1;
 
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(this.x-1, this.y, 1);
+            mesh.position.set(this.x-2, this.y, 1);
             mesh.matrixAutoUpdate = false;
+            this.buttonMesh = mesh;
             this.scene.add(mesh);
             mesh.updateMatrix();
 
 
-            this.pedestal.label = this.objects.add({
-                base: { children: [mesh] },
-                material: { children:[material]},
-                collision: { children: [mesh] },
-                mass: 0,
-                offset: new THREE.Vector3(0, 0, 1),
-                rotation: new THREE.Euler(0, 0, 0),
-                sleep: true
-            });
+            // this.pedestal.label = this.objects.add({
+            //     base: { children: [mesh] },
+            //     material: { children:[material]},
+            //     collision: { children: [mesh] },
+            //     mass: 0,
+            //     offset: new THREE.Vector3(0, 0, 1),
+            //     rotation: new THREE.Euler(0, 0, 0),
+            //     sleep: true
+            // });
 
         }, undefined, (error) => {
             console.error('Error loading font:', error);
@@ -168,39 +169,39 @@ export default class Pedestal
         this.container.add(this.planeMesh);
     }
 
-    setAddMediaLabel() {
-        // Set up
-        this.addMediaLabel = {}
-    
-        const loader = new FontLoader();
-    
-        loader.load('fonts/comic_neue.json', (font) => {
-            const geometry = new TextGeometry('Add Media', {
-                font: font,
-                size: 100, // adjust size
-                height: 1, // adjust depth
-            });
-    
-            this.addMediaLabel.material = new THREE.MeshBasicMaterial({ 
-                transparent: false, 
-                depthWrite: false, 
-                // make the color light blue
-                color: 0xB0C4DE
-            });
-            this.addMediaLabel.material.opacity = 1;
-    
-            this.addMediaLabel.mesh = new THREE.Mesh(
-                geometry, 
-                this.addMediaLabel.material
-            );
-            this.addMediaLabel.mesh.position.set(this.x-10, this.y, 2);
-            this.addMediaLabel.mesh.matrixAutoUpdate = false;
-            this.addMediaLabel.mesh.updateMatrix();
-            console.log('Position of addMediaLabel:', this.addMediaLabel.mesh.position)
-    
-            this.container.add(this.addMediaLabel.mesh);
-        });
-    }
+    // setAddMediaLabel() {
+    //     // Set up
+    //     this.addMediaLabel = {}
+    //
+    //     const loader = new FontLoader();
+    //
+    //     loader.load('fonts/comic_neue.json', (font) => {
+    //         const geometry = new TextGeometry('Add Media', {
+    //             font: font,
+    //             size: 100, // adjust size
+    //             height: 1, // adjust depth
+    //         });
+    //
+    //         this.addMediaLabel.material = new THREE.MeshBasicMaterial({
+    //             transparent: false,
+    //             depthWrite: false,
+    //             // make the color light blue
+    //             color: 0xB0C4DE
+    //         });
+    //         this.addMediaLabel.material.opacity = 1;
+    //
+    //         this.addMediaLabel.mesh = new THREE.Mesh(
+    //             geometry,
+    //             this.addMediaLabel.material
+    //         );
+    //         this.addMediaLabel.mesh.position.set(this.x-10, this.y, 2);
+    //         this.addMediaLabel.mesh.matrixAutoUpdate = false;
+    //         this.addMediaLabel.mesh.updateMatrix();
+    //         console.log('Position of addMediaLabel:', this.addMediaLabel.mesh.position)
+    //
+    //         this.container.add(this.addMediaLabel.mesh);
+    //     });
+    // }
 setPlaceholder() {
     // Add a null object to the scene as a child of this.pedestal, it should be 3x3x3
     this.placeholder = new THREE.Object3D();
@@ -270,8 +271,8 @@ addButtonFunctionality() {
 
 
                 gltfLoader.parse(e.target.result, '', (gltf) => {
+                    this.buttonMesh.visible = false;
 
-                    this.pedestal.label.container.visible = false;
                     gltf.scene.scale.set(1, 1, 1);
                     gltf.scene.position.set(this.x, this.y, 1);
                     scene.add( gltf.scene );
