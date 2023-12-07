@@ -13,7 +13,7 @@ export default class Car
         this.physics = _options.physics
         this.shadows = _options.shadows
         this.materials = _options.materials
-        //this.controls = _options.controls
+        this.controls = _options.controls
         //this.sounds = _options.sounds
         this.renderer = _options.renderer
         this.camera = _options.camera

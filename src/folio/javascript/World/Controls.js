@@ -55,8 +55,8 @@ export default class Controls extends EventEmitter
         const panSpeed = 1
 
         const moveCamera = (x, y) => {
-            this.camera.pan.value.x += x;
-            this.camera.pan.value.y += y;
+            this.camera.pan.targetValue.x += x;
+            this.camera.pan.targetValue.y += y;
         };
 
         this.keyboard.events.keyDown = (_event) =>
