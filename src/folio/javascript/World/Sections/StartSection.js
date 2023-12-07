@@ -36,7 +36,7 @@ export default class StartSection
 
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
         this.setPedestal()
-        this.setTest()
+        //this.setTest()
         
     }
 
