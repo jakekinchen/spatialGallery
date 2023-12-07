@@ -1,9 +1,10 @@
 import * as THREE from 'three'
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import Pedestal from '../Pedestal';
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
+import RoundedBoxGeometry from 'three-rounded-box';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import Label from '../Label'
 
 
 export default class StartSection
@@ -39,6 +40,7 @@ export default class StartSection
 
         // Assuming this is within a class that has access to this.objects, this.resources, etc.
         this.setPedestal()
+        this.setLabel()
         //this.setAddThisMediaLabel()
         //this.setTest()
         
@@ -118,6 +120,20 @@ export default class StartSection
             debug: this.debug,
             x: this.x-6,
             y: this.y+5
+        });
+        
+    }
+
+    setLabel(){
+        this.pedestal.label = new Label({
+            objects: this.objects,
+            text: 'Add Media',
+            size: .6,
+            height: .1,
+            color: 0x000000,
+            x: this.x-6,
+            y: this.y+5,
+            z: 0
         });
     }
 
