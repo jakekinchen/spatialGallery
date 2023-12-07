@@ -14,6 +14,7 @@ export default class Controls extends EventEmitter
         this.sizes = _options.sizes
         this.time = _options.time
         this.camera = _options.camera
+        this.angle = _options.angle
         this.sounds = _options.sounds
 
         this.setActions()
@@ -29,8 +30,6 @@ export default class Controls extends EventEmitter
         this.actions.left = false
         this.actions.brake = false
         this.actions.boost = false
-        //this.camera.pan.value.y = false
-        //this.camera.pan.value.x = false
 
         document.addEventListener('visibilitychange', () =>
         {
@@ -42,8 +41,6 @@ export default class Controls extends EventEmitter
                 this.actions.left = false
                 this.actions.brake = false
                 this.actions.boost = false
-                //this.camera.pan.value.y = false
-                //this.camera.pan.value.x = false
             }
         })
     }
@@ -59,52 +56,74 @@ export default class Controls extends EventEmitter
             this.camera.pan.targetValue.y += y;
         };
 
+        const moveAngle = (x, y, z) => {
+            this.angle.pan.targetValue.x += x;
+            this.angle.pan.targetValue.y += y;
+            this.angle.pan.targetValue.z += z;
+        };
+
         this.keyboard.events.keyDown = (_event) =>
         {
             switch(_event.key)
             {
-                case 'ArrowUp':
+                //case 'ArrowUp':
                 case 'w':
                 case '8':    
                     moveCamera(0, panSpeed);
                     break
 
-                case 'ArrowRight':
+                //case 'ArrowRight':
                 case 'd':
-                case '8':
+                case '6':
                     moveCamera(panSpeed, 0);
                     break
 
-                case 'ArrowDown':
+                //case 'ArrowDown':
                 case 's':
                 case '2':
                     moveCamera(0, -panSpeed);
                     break
 
-                case 'ArrowLeft':
+                //case 'ArrowLeft':
                 case 'a':
                 case '4':
                     moveCamera(-panSpeed, 0);
                     break
 
-                case 'ArrowUp' && 'ArrowRight':
+                //case 'ArrowUp' && 'ArrowRight':
                 case 'w' && 'd':
                 case '9':
                     moveCamera(panSpeed, panSpeed);
                     break
 
                 case '7':
-                    moveCamera(-panSpeed, panSpeed)
+                    moveCamera(-panSpeed, panSpeed);
                     break
 
                 case '1':
-                    moveCamera(-panSpeed, -panSpeed)
+                    moveCamera(-panSpeed, -panSpeed);
                     break
                     
                 case '3':
-                    moveCamera(panSpeed, -panSpeed)   
+                    moveCamera(panSpeed, -panSpeed);
                     break 
 
+                /*case 'ArrowRight':
+                    moveAngle(panSpeed, 0, 0);
+                    break
+                    
+                case 'ArrowLeft':
+                    moveAngle(-panSpeed, 0, 0);
+                    break
+                    
+                case 'ArrowUp':
+                    moveAngle(0, panSpeed, 0);
+                    break
+                    
+                case 'ArrowDown':
+                    moveAngle(0, -panSpeed, 0);
+                    break*/    
+                    
                 //case 'Control':
                 //case ' ':
                 //    this.actions.brake = true

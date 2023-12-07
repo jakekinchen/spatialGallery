@@ -67,18 +67,33 @@ export default class Camera
             this.debugFolder.add(this.angle.value, 'z').step(0.001).min(- 2).max(2).name('invertDirectionZ').listen()
         }
         
-        const onRightClick = (event) => {
-            event.preventDefault();
-    
-            // Check if _name exists based on the event or use a default value
-            const _name = event.target.id === 'someElementID' ? 'projects' : 'default'; // Modify this logic based on your actual use case
-    
-            // Change the angle based on _name
-            this.angle.set(_name);
+        const handleArrowKeyPress = (event) => {
+            const panSpeed = .01; // Adjust the panning speed as needed
+            const moveAngle = (x, y) => {
+                this.angle.value.x += x;
+                this.angle.value.y += y;
+                this.angle.value.z += z;
+            };
+            switch (event.key) {
+                case 'ArrowUp':
+                    moveAngle(0, panSpeed, 0);
+                    break;
+                case 'ArrowDown':
+                    moveAngle(0, -panSpeed, 0);
+                    break;
+                case 'ArrowLeft':
+                    moveAngle(-panSpeed, 0, 0);
+                    break;
+                case 'ArrowRight':
+                    moveAngle(panSpeed, 0, 0) ;
+                    break;
+                default:
+                    break;
+            }
         };
     
-        // Event listener for right-click
-        window.addEventListener('contextmenu', onRightClick, false);
+        // Event listener for keydown events
+        window.addEventListener('keydown', handleArrowKeyPress);
     }
 
     setInstance()
