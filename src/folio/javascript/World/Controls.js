@@ -52,7 +52,7 @@ export default class Controls extends EventEmitter
     {
         this.keyboard = {}
         this.keyboard.events = {}
-        const panSpeed = 1
+        const panSpeed = 0.5
 
         const moveCamera = (x, y) => {
             this.camera.pan.targetValue.x += x;
@@ -61,33 +61,49 @@ export default class Controls extends EventEmitter
 
         this.keyboard.events.keyDown = (_event) =>
         {
-            //this.pan.active = true
-            //this.pan.needsUpdate = true
             switch(_event.key)
             {
                 case 'ArrowUp':
-                //case 'z':
                 case 'w':
-                    //this.camera.pan.reset()
+                case '8':    
                     moveCamera(0, panSpeed);
                     break
 
                 case 'ArrowRight':
                 case 'd':
+                case '8':
                     moveCamera(panSpeed, 0);
                     break
 
                 case 'ArrowDown':
                 case 's':
-                    //this.camera.pan.reset()
+                case '2':
                     moveCamera(0, -panSpeed);
                     break
 
                 case 'ArrowLeft':
-                //case 'q':
                 case 'a':
+                case '4':
                     moveCamera(-panSpeed, 0);
                     break
+
+                case 'ArrowUp' && 'ArrowRight':
+                case 'w' && 'd':
+                case '9':
+                    moveCamera(panSpeed, panSpeed);
+                    break
+
+                case '7':
+                    moveCamera(-panSpeed, panSpeed)
+                    break
+
+                case '1':
+                    moveCamera(-panSpeed, -panSpeed)
+                    break
+                    
+                case '3':
+                    moveCamera(panSpeed, -panSpeed)   
+                    break 
 
                 //case 'Control':
                 //case ' ':
