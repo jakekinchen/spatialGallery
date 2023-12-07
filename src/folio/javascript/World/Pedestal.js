@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js' 
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
@@ -35,7 +37,15 @@ export default class Pedestal
         // Set up
         this.container = new THREE.Object3D()
         this.container.matrixAutoUpdate = false
+        const ambientLight = new THREE.AmbientLight( 0xFFFFFF, 1 );
 
+        this.scene.add( ambientLight );
+        const dirLight = new THREE.DirectionalLight( 0xefefff, 10 );
+        dirLight.position.set(this.x - 1, -5, 8 );
+        this.scene.add( dirLight );
+        console.log(ambientLight.position);
+        console.log(dirLight.position);
+        console.log(dirLight);
         this.resources.items.areaResetTexture.magFilter = THREE.NearestFilter;
         this.resources.items.areaResetTexture.minFilter = THREE.LinearFilter;
 
@@ -216,13 +226,12 @@ setButton() {
 }
 
 addButtonFunctionality() {
-
+    let prevObject = "";
     const fileInput = document.getElementById('threeFileInput');
     this.pedestal.button.on('interact', () => {
         console.log('Button interacted, opening file input.');
 
         fileInput.click();
-
     });
 
     fileInput.addEventListener('change', (event) => {
@@ -237,23 +246,34 @@ addButtonFunctionality() {
         const file = event.target.files[0];
         console.log('File selected:', file);
         if (file) {
+            if (prevObject !== ""){
+                prevObject.visible = false;
+            }
             const reader = new FileReader();
             reader.onload = (e) => {
                 const gltfLoader = new GLTFLoader();
-                const dracoLoader = new DRACOLoader();
-                dracoLoader.setDecoderPath('draco/')
-                dracoLoader.setDecoderConfig({ type: 'js' })
-                gltfLoader.setDRACOLoader( dracoLoader );
+                const dracoLoader = new DRACOLoader()
+                    .setDecoderPath('draco/')
+                    .setDecoderConfig({ type: 'js' });
+                const KTX2_LOADER = new KTX2Loader()
+                    .setTranscoderPath('basis/')
+                    .detectSupport( renderer );
+                gltfLoader.setDRACOLoader( dracoLoader )
+                    .setKTX2Loader(KTX2_LOADER)
+                    .setMeshoptDecoder(MeshoptDecoder);
+
 
                 gltfLoader.parse(e.target.result, '', (gltf) => {
 
+                    this.pedestal.label.container.visible = false;
                     gltf.scene.scale.set(1, 1, 1);
-                    gltf.scene.position.set(6, 5, 1);
+                    gltf.scene.position.set(this.x, this.y, 1);
                     scene.add( gltf.scene );
-                    this.renderer.render( scene, this.camera );
+                    prevObject = gltf.scene;
                     const bboxHelper = new THREE.BoxHelper(gltf.scene, 0xff0000);
                     this.container.add(bboxHelper);
-
+                    renderer.outputEncoding = THREE.sRGBEncoding;
+                    renderer.render( scene, camera );
                     // Trigger a render/update if necessary
                     // yourRenderFunction(); // Uncomment or modify as needed
                 });
