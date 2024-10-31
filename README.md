@@ -1,33 +1,64 @@
-# Threeveloper
+# Spatial Gallery
 
-## 8. Adding Materialized Objects Part 2
+## Overview
+**Spatial Gallery** is an innovative 3D environment designed to showcase various media files interactively. Built with Three.js and other 3D assets, it transforms traditional portfolio viewing by adding an immersive, spatial dimension.
 
-![Portfolio](./portfolio.png)
+---
 
-Hey everyone! 👋
+## Why Spatial Gallery?
+Spatial Gallery offers a unique, interactive approach to presenting a designer's portfolio, enhancing user engagement and providing a memorable experience that stands out from conventional online galleries.
 
-This branch contains the code of [video #8](https://www.youtube.com/watch?v=uPnlso8wuxE) of this course where we are converting [Bruno Simon's portfolio project](https://bruno-simon.com/) from three.js to react three fiber.
+---
 
-You can use this project as a reference if you get stuck somewhere or if you want to check which exact dependency versions are being used in the videos.
+## Goals
 
-Bruno Simon's portfolio might be updated over time as well, so feel free to download the version downloaded in the video by copying the `src/folio` folder. Please note that the files inside of that folder might be edited slightly in the videos to keep things working. The unedited version can be found [here](https://github.com/sjoerdvanBommel/threeveloper/tree/011-bruno-simon-portfolio-introduction/src/folio).
+### Design Objectives
+- **Ease of Navigation**: Intuitive controls for seamless exploration.
+- **Customizable Layouts**: Adapt paths and environments to suit individual needs.
+- **Interactivity**: Users actively engage with the content in a dynamic 3D space.
 
-If you're not familiar with three.js yet, definitely check out [my other videos](https://www.youtube.com/channel/UC74yl2lsr6zF9RENwXrEkpw/) and Bruno Simon's [three.js journey](https://threejs-journey.com/) course.
+### Desired Outcomes
+- **Enhanced User Engagement**: Increase interaction time and attention on presented works.
+- **Versatile Display Options**: A platform adaptable to various designer portfolios.
 
-The source code for each course video is seperated into it's own branch. The link to the branch is added to the description of that video.
+---
 
-👩‍💻 Enjoy coding! 👨‍💻
+## Target Users
 
-<br/><br/>
+### Who are the Target Users?
+- **Designers**: Graphic designers, 3D artists, videographers, and other creatives looking to present their work.
+- **Portfolio Viewers**: Potential clients, collaborators, and design enthusiasts.
+- **General Public**: Anyone with an interest in experiencing design in an innovative format.
 
-## Getting Started
+### Why This Audience?
+- **Accessible Feedback**: Designers receive immediate reactions and insights.
+- **Immediate Applications**: Tailored to scenarios where design portfolios need to make an impact.
 
-Once you downloaded the project, you only have to run two commands:
+---
 
-```
-npm install
-```
+## Resources
 
-```
-npm run dev
-```
+- **Three.js**: Core 3D library.
+- **3D Modeling Software**: Blender or similar for asset creation.
+- **Web Technologies**: JavaScript, HTML, CSS for foundational structure.
+- **React, Tailwind, Shadcn**: Modern UI components and styling.
+- **VSCode**: Development environment.
+- **Desktop/Laptop**: Optimal platform for interaction and design.
+
+---
+
+## Development Plan
+
+### Components to be Created
+- **3D Environment Setup**: Establish the foundational space for media display.
+- **Media Upload Feature**: Enable users to add media for display.
+- **Basic Movement**: Allow users to navigate the 3D environment intuitively.
+
+### Time Estimates
+- **4 Weeks**: Prototype with basic functionality.
+- **6 Weeks**: Full-featured version ready for use.
+
+---
+
+## Why Spatial Gallery?
+Spatial Gallery is a forward-thinking, interactive experience ideal for designers and creatives seeking to present their work in a visually engaging and unique way. Dive in to see portfolios like never before!
