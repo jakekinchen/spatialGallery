@@ -1,5 +1,8 @@
 # Spatial Gallery
 
+<img width="927" alt="Screenshot 2024-11-10 at 6 49 15 PM" src="https://github.com/user-attachments/assets/24d11b0c-4bd7-445f-9aa2-663f84bfcd0d">
+
+
 ## Overview
 **Spatial Gallery** is an innovative 3D environment designed to showcase various media files interactively. Built with Three.js and other 3D assets, it transforms traditional portfolio viewing by adding an immersive, spatial dimension.
 
